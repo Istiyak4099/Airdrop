@@ -29,7 +29,7 @@ export default function DashboardLayout({
           <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
             <Link href="/dashboard" className="flex items-center gap-2 font-semibold">
               <Bot className="h-6 w-6 text-primary" />
-              <span className="">Aether Assistant</span>
+              <span className="">Airdrop</span>
             </Link>
           </div>
           <div className="flex-1">
@@ -79,7 +79,7 @@ export default function DashboardLayout({
                   className="flex items-center gap-2 text-lg font-semibold mb-4"
                 >
                   <Bot className="h-6 w-6 text-primary" />
-                  <span>Aether Assistant</span>
+                  <span>Airdrop</span>
                 </Link>
                 <Link
                   href="/dashboard"

@@ -21,7 +21,7 @@ export default function LoginPage() {
           <div className="flex justify-center mb-4">
              <Link href="/" className="flex items-center gap-2 font-bold text-xl">
                 <Bot className="h-8 w-8 text-primary" />
-                <span>Aether Assistant</span>
+                <span>Airdrop</span>
             </Link>
           </div>
           <CardTitle className="text-2xl">Login</CardTitle>

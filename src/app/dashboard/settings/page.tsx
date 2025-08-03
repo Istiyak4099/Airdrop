@@ -69,7 +69,7 @@ export default function SettingsPage() {
                 <CardHeader>
                     <CardTitle>Integrations</CardTitle>
                     <CardDescription>
-                    Connect your social media accounts to Aether Assistant.
+                    Connect your social media accounts to Airdrop.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">

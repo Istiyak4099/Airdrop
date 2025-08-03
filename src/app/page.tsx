@@ -16,7 +16,7 @@ export default function Home() {
     {
       icon: <Clock className="h-8 w-8 text-primary" />,
       title: '24/7 Automation',
-      description: 'Aether Assistant works around the clock to ensure no customer is left waiting.',
+      description: 'Airdrop works around the clock to ensure no customer is left waiting.',
     },
     {
       icon: <Inbox className="h-8 w-8 text-primary" />,
@@ -53,7 +53,7 @@ export default function Home() {
     {
       name: 'Sarah L.',
       role: 'E-commerce Manager',
-      quote: "Aether Assistant has revolutionized our customer service. It's like having a 24/7 team member.",
+      quote: "Airdrop has revolutionized our customer service. It's like having a 24/7 team member.",
       avatar: 'https://placehold.co/100x100',
     },
     {
@@ -81,7 +81,7 @@ export default function Home() {
               Automate Your Customer Communication
             </h1>
             <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-gray-600 dark:text-gray-300">
-              Aether Assistant is an AI platform that handles comments, messages, and queries instantly with human-like responses.
+              Airdrop is an AI platform that handles comments, messages, and queries instantly with human-like responses.
             </p>
             <div className="mt-8 flex justify-center gap-4">
               <Button asChild size="lg" className="transition-transform duration-300 hover:scale-105">
@@ -94,7 +94,7 @@ export default function Home() {
             <div className="mt-16">
               <Image
                 src="https://placehold.co/1200x600"
-                alt="Aether Assistant Dashboard"
+                alt="Airdrop Dashboard"
                 width={1200}
                 height={600}
                 className="rounded-lg shadow-2xl mx-auto"
@@ -107,7 +107,7 @@ export default function Home() {
         <section id="features" className="py-20 md:py-28">
           <div className="container mx-auto px-4">
             <div className="text-center">
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Why Aether Assistant?</h2>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Why Airdrop?</h2>
               <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
                 Everything you need to streamline customer support and boost engagement.
               </p>
@@ -173,7 +173,7 @@ export default function Home() {
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Loved by Businesses Worldwide</h2>
               <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
-                Hear what our customers have to say about Aether Assistant.
+                Hear what our customers have to say about Airdrop.
               </p>
             </div>
             <div className="mt-16 grid gap-8 md:grid-cols-1 lg:grid-cols-3">

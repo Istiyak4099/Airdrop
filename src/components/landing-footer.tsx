@@ -9,7 +9,7 @@ export function LandingFooter() {
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-2 font-bold text-lg">
               <Bot className="h-7 w-7 text-primary" />
-              <span>Aether Assistant</span>
+              <span>Airdrop</span>
             </Link>
             <p className="text-sm text-muted-foreground">AI-powered customer communication platform.</p>
             <div className="flex gap-4">
@@ -44,7 +44,7 @@ export function LandingFooter() {
           </div>
         </div>
         <div className="mt-8 border-t pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Aether Assistant. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Airdrop. All rights reserved.</p>
         </div>
       </div>
     </footer>
