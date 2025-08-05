@@ -57,10 +57,10 @@ export default function Home() {
           <div className="absolute top-0 left-0 w-full h-full bg-grid-purple-100/[0.05] dark:bg-grid-purple-900/[0.2]"></div>
           <div className="container mx-auto px-4 z-10 relative">
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-gray-900 dark:text-white">
-              Automate Your Customer Communication
+              Airdrop — AI-Powered Customer Assistant
             </h1>
             <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-gray-600 dark:text-gray-300">
-              Airdrop is an AI platform that handles comments, messages, and queries instantly with human-like responses.
+              Automate your customer messaging, respond instantly on any platform, and handle digital tasks 24/7. Save time, delight customers, and grow your business with Rareflex.
             </p>
             <div className="mt-8 flex justify-center gap-4">
               <Button asChild size="lg" className="transition-transform duration-300 hover:scale-105">
