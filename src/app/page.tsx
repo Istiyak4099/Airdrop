@@ -93,7 +93,7 @@ export default function Home() {
             </div>
             <div className="mt-16">
               <Image
-                src="https://placehold.co/1200x600"
+                src="https://placehold.co/1200x600.png"
                 alt="Airdrop Dashboard"
                 width={1200}
                 height={600}

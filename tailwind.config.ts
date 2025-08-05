@@ -116,5 +116,6 @@ export default {
 } satisfies Config;
 
 function svgToDataUri(svg: string) {
-  return `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`;
+  const finalSvg = svg.replace('<path d="M0 .5H31.5V32"/>', '<path d="M0 .5H31.5V32" stroke-width="0.3"/>');
+  return `data:image/svg+xml;base64,${Buffer.from(finalSvg).toString('base64')}`;
 }
