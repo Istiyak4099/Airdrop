@@ -59,7 +59,7 @@ export default function Home() {
             <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-primary">
               Airdrop
             </h1>
-            <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight text-gray-900 dark:text-white mt-2">
+            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900 dark:text-white mt-2">
               AI-Powered Customer Assistant
             </h2>
             <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-gray-600 dark:text-gray-300">
