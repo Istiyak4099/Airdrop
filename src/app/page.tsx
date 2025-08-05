@@ -49,27 +49,6 @@ export default function Home() {
     },
   ];
 
-  const testimonials = [
-    {
-      name: 'Sarah L.',
-      role: 'E-commerce Manager',
-      quote: "Airdrop has revolutionized our customer service. It's like having a 24/7 team member.",
-      avatar: 'https://placehold.co/100x100',
-    },
-    {
-      name: 'Mike R.',
-      role: 'Startup Founder',
-      quote: 'The AI is incredibly smart and handles most queries on its own. Our response times have dropped from hours to seconds.',
-      avatar: 'https://placehold.co/100x100',
-    },
-     {
-      name: 'Jessica P.',
-      role: 'Marketing Head',
-      quote: "The analytics dashboard gives us amazing insights into our customer interactions. Highly recommended!",
-      avatar: 'https://placehold.co/100x100',
-    },
-  ];
-
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <LandingHeader />
@@ -162,45 +141,6 @@ export default function Home() {
                       {plan.price.startsWith('$') ? 'Choose Plan' : 'Contact Sales'}
                     </Button>
                   </CardFooter>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section id="testimonials" className="py-20 md:py-28">
-          <div className="container mx-auto px-4">
-            <div className="text-center">
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Loved by Businesses Worldwide</h2>
-              <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
-                Hear what our customers have to say about Airdrop.
-              </p>
-            </div>
-            <div className="mt-16 grid gap-8 md:grid-cols-1 lg:grid-cols-3">
-              {testimonials.map((testimonial, index) => (
-                <Card key={index} className="flex flex-col justify-between">
-                  <CardHeader>
-                    <div className="flex items-center gap-4">
-                      <Image
-                        src={testimonial.avatar}
-                        alt={testimonial.name}
-                        width={50}
-                        height={50}
-                        className="rounded-full"
-                        data-ai-hint="person portrait"
-                      />
-                      <div>
-                        <h3 className="font-semibold">{testimonial.name}</h3>
-                        <p className="text-sm text-muted-foreground">{testimonial.role}</p>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="italic">"{testimonial.quote}"</p>
-                    <div className="flex mt-4 text-yellow-400">
-                      {[...Array(5)].map((_, i) => <Star key={i} className="h-5 w-5 fill-current" />)}
-                    </div>
-                  </CardContent>
                 </Card>
               ))}
             </div>
