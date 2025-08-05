@@ -56,9 +56,12 @@ export default function Home() {
         <section id="hero" className="relative py-20 md:py-32 text-center bg-white dark:bg-gray-900 overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-full bg-grid-purple-100/[0.05] dark:bg-grid-purple-900/[0.2]"></div>
           <div className="container mx-auto px-4 z-10 relative">
-            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-gray-900 dark:text-white">
-              Airdrop — AI-Powered Customer Assistant
+            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-primary">
+              Airdrop
             </h1>
+            <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight text-gray-900 dark:text-white mt-2">
+              AI-Powered Customer Assistant
+            </h2>
             <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-gray-600 dark:text-gray-300">
               Automate your customer messaging, respond instantly on any platform, and handle digital tasks 24/7. Save time, delight customers, and grow your business with Rareflex.
             </p>
