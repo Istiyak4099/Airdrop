@@ -15,7 +15,8 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
   }, [user, loading, router]);
 
   if (loading || !user) {
-    return <div>Loading...</div>;
+    // You can add a spinner here
+    return null;
   }
 
   return <>{children}</>;
