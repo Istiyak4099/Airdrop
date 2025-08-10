@@ -9,29 +9,19 @@ import { LandingFooter } from '@/components/landing-footer';
 export default function Home() {
   const features = [
     {
+      icon: <Zap className="h-8 w-8 text-primary" />,
+      title: 'Instant Auto-Replies',
+      description: 'Provide immediate, AI-powered responses to customer inquiries. Address FAQs, resolve common issues, and boost customer satisfaction around the clock.',
+    },
+    {
       icon: <Bot className="h-8 w-8 text-primary" />,
-      title: 'Instant Auto-replies',
-      description: 'Our AI generates human-like responses to customer messages instantly.',
-    },
-    {
-      icon: <Clock className="h-8 w-8 text-primary" />,
-      title: '24/7 Automation',
-      description: 'Airdrop works around the clock to ensure no customer is left waiting.',
-    },
-    {
-      icon: <Inbox className="h-8 w-8 text-primary" />,
-      title: 'Smart Inbox',
-      description: 'A unified inbox for all your social media platforms, with smart filtering.',
+      title: 'Smart Workflow Automation',
+      description: 'Automate key business processes like appointment booking, lead qualification, and task assignment with intelligent, customizable AI workflows.',
     },
     {
       icon: <BarChart2 className="h-8 w-8 text-primary" />,
-      title: 'In-Depth Analytics',
-      description: 'Track performance, response times, and customer satisfaction with our dashboard.',
-    },
-    {
-        icon: <Zap className="h-8 w-8 text-primary" />,
-        title: 'Smart Workflow Automation',
-        description: 'Automate key business processes like appointment booking and lead qualification.',
+      title: 'Customer Insights',
+      description: 'Analyze customer interactions to identify key trends, preferences, and pain points. Use AI-driven insights to improve your services and tailor solutions.',
     }
   ];
 
@@ -93,24 +83,23 @@ export default function Home() {
 
         <section id="features" className="py-20 md:py-28">
           <div className="container mx-auto px-4">
-            <div className="text-center">
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Why Airdrop?</h2>
-              <p className="mt-4 max-w-2xl mx-auto text-lg font-semibold text-muted-foreground">
-                Everything you need to succeed
+            <div className="text-center mb-16">
+              <div className="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold text-primary mb-4">
+                Key Features
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Everything You Need to Succeed</h2>
+              <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
+                Airdrop is packed with powerful features to help your business thrive in the digital age.
               </p>
             </div>
-            <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-3">
               {features.map((feature, index) => (
-                <Card key={index} className="text-center transform transition-transform duration-300 hover:-translate-y-2 hover:shadow-xl">
-                  <CardHeader>
-                    <div className="mx-auto bg-primary/10 rounded-full p-3 w-fit">
-                      {feature.icon}
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <h3 className="text-xl font-semibold">{feature.title}</h3>
-                    <p className="mt-2 text-muted-foreground">{feature.description}</p>
-                  </CardContent>
+                <Card key={index} className="text-left bg-white dark:bg-gray-900/50 rounded-2xl shadow-lg transform transition-transform duration-300 hover:-translate-y-2 hover:shadow-xl p-6">
+                  <div className="mb-4">
+                    {feature.icon}
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
+                  <p className="text-muted-foreground">{feature.description}</p>
                 </Card>
               ))}
             </div>
