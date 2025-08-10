@@ -90,8 +90,8 @@ export default function Home() {
           <div className="container mx-auto px-4">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Why Airdrop?</h2>
-              <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
-                Everything you need to streamline customer support and boost engagement.
+              <p className="mt-4 max-w-2xl mx-auto text-lg font-semibold text-muted-foreground">
+                Everything you need to succeed
               </p>
             </div>
             <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
