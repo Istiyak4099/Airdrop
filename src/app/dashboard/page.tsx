@@ -1,19 +1,13 @@
 import Link from "next/link"
 import {
-  Activity,
   ArrowUpRight,
-  Clock,
-  MessagesSquare,
-  Smile,
-  Users,
+  Bot,
+  Facebook,
+  Link as LinkIcon,
+  MessageSquare,
+  Package,
 } from "lucide-react"
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -22,179 +16,85 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
 
 export default function Dashboard() {
   return (
     <>
-      <div className="flex items-center">
+      <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold md:text-2xl">Dashboard</h1>
       </div>
+      <Card className="flex flex-col md:flex-row items-center justify-between p-6 bg-muted/40 border-0 shadow-none">
+        <div className="space-y-2 mb-4 md:mb-0">
+          <h2 className="text-2xl font-bold">Welcome to Airdrop</h2>
+          <p className="text-muted-foreground max-w-lg">
+            Help your business grow faster with AI-powered social media automation.
+          </p>
+          <div className="flex gap-2 pt-2">
+            <Button asChild>
+                <Link href="/dashboard/inbox">Start Chatting</Link>
+            </Button>
+            <Button asChild variant="outline">
+                <Link href="/dashboard/settings">Connect Pages</Link>
+            </Button>
+          </div>
+        </div>
+        <Bot className="w-24 h-24 text-primary/80" />
+      </Card>
       <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Messages Handled
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-sm font-medium">
+                <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                Total Chats
             </CardTitle>
-            <MessagesSquare className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12,234</div>
+            <div className="text-2xl font-bold">0</div>
             <p className="text-xs text-muted-foreground">
-              +20.1% from last month
+              Start chatting to see data
             </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Avg. Response Time
-            </CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">32s</div>
-            <p className="text-xs text-muted-foreground">
-              -5.2% from last month
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Satisfaction</CardTitle>
-            <Smile className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">95%</div>
-            <p className="text-xs text-muted-foreground">
-              +1.2% from last month
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Now</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">+573</div>
-            <p className="text-xs text-muted-foreground">
-              +201 since last hour
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-      <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
-        <Card className="xl:col-span-2">
-          <CardHeader className="flex flex-row items-center">
-            <div className="grid gap-2">
-              <CardTitle>Recent Conversations</CardTitle>
-              <CardDescription>
-                Recent conversations handled by the AI.
-              </CardDescription>
-            </div>
-            <Button asChild size="sm" className="ml-auto gap-1">
-              <Link href="/dashboard/inbox">
-                View All
-                <ArrowUpRight className="h-4 w-4" />
-              </Link>
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Customer</TableHead>
-                  <TableHead className="hidden xl:table-column">
-                    Platform
-                  </TableHead>
-                  <TableHead className="hidden xl:table-column">
-                    Status
-                  </TableHead>
-                  <TableHead className="text-right">Last Message</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell>
-                    <div className="font-medium">Liam Johnson</div>
-                    <div className="hidden text-sm text-muted-foreground md:inline">
-                      liam@example.com
-                    </div>
-                  </TableCell>
-                  <TableCell className="hidden xl:table-column">
-                    Facebook
-                  </TableCell>
-                  <TableCell className="hidden xl:table-column">
-                    <Badge className="text-xs" variant="outline">
-                      Resolved
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">2 min ago</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>
-                    <div className="font-medium">Olivia Smith</div>
-                    <div className="hidden text-sm text-muted-foreground md:inline">
-                      olivia@example.com
-                    </div>
-                  </TableCell>
-                  <TableCell className="hidden xl:table-column">
-                    Instagram
-                  </TableCell>
-                  <TableCell className="hidden xl:table-column">
-                    <Badge className="text-xs" variant="outline">
-                      Open
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">5 min ago</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Recent Customers</CardTitle>
+             <CardTitle className="flex items-center gap-2 text-sm font-medium">
+                <Facebook className="h-4 w-4 text-muted-foreground" />
+                Connected Pages
+            </CardTitle>
           </CardHeader>
-          <CardContent className="grid gap-8">
-            <div className="flex items-center gap-4">
-              <Avatar className="hidden h-9 w-9 sm:flex">
-                <AvatarImage src="https://placehold.co/100x100" alt="Avatar" data-ai-hint="person face" />
-                <AvatarFallback>OM</AvatarFallback>
-              </Avatar>
-              <div className="grid gap-1">
-                <p className="text-sm font-medium leading-none">
-                  Olivia Martin
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  olivia.martin@email.com
-                </p>
-              </div>
-              <div className="ml-auto font-medium">+$1,999.00</div>
-            </div>
-            <div className="flex items-center gap-4">
-              <Avatar className="hidden h-9 w-9 sm:flex">
-                <AvatarImage src="https://placehold.co/100x100" alt="Avatar" data-ai-hint="person face" />
-                <AvatarFallback>JL</AvatarFallback>
-              </Avatar>
-              <div className="grid gap-1">
-                <p className="text-sm font-medium leading-none">
-                  Jackson Lee
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  jackson.lee@email.com
-                </p>
-              </div>
-              <div className="ml-auto font-medium">+$39.00</div>
-            </div>
+          <CardContent>
+            <div className="text-2xl font-bold">0</div>
+            <p className="text-xs text-muted-foreground">
+                Connect your business pages
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-sm font-medium">
+                <Package className="h-4 w-4 text-muted-foreground" />
+                Auto Responses
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">0</div>
+            <p className="text-xs text-muted-foreground">
+              Messages handled by AI
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+             <CardTitle className="flex items-center gap-2 text-sm font-medium">
+                <LinkIcon className="h-4 w-4 text-muted-foreground" />
+                Current Plan
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">Free</div>
+            <Button asChild variant="link" className="p-0 h-auto text-xs">
+                <Link href="/#pricing">Upgrade for more features</Link>
+            </Button>
           </CardContent>
         </Card>
       </div>
