@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Check, Bot, Clock, Inbox, BarChart2, Star } from 'lucide-react';
+import { Check, Bot, Clock, Inbox, BarChart2, Star, Zap } from 'lucide-react';
 import { LandingHeader } from '@/components/landing-header';
 import { LandingFooter } from '@/components/landing-footer';
 
@@ -10,7 +10,7 @@ export default function Home() {
   const features = [
     {
       icon: <Bot className="h-8 w-8 text-primary" />,
-      title: 'AI-Powered Responses',
+      title: 'Instant Auto-replies',
       description: 'Our AI generates human-like responses to customer messages instantly.',
     },
     {
@@ -28,6 +28,11 @@ export default function Home() {
       title: 'In-Depth Analytics',
       description: 'Track performance, response times, and customer satisfaction with our dashboard.',
     },
+    {
+        icon: <Zap className="h-8 w-8 text-primary" />,
+        title: 'Smart Workflow Automation',
+        description: 'Automate key business processes like appointment booking and lead qualification.',
+    }
   ];
 
   const pricingPlans = [
@@ -59,7 +64,7 @@ export default function Home() {
             <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-primary">
               Airdrop
             </h1>
-            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900 dark:text-white mt-2">
+            <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white mt-2">
               AI-Powered Customer Assistant
             </h2>
             <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-gray-600 dark:text-gray-300">
@@ -94,7 +99,7 @@ export default function Home() {
                 Everything you need to succeed
               </p>
             </div>
-            <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
               {features.map((feature, index) => (
                 <Card key={index} className="text-center transform transition-transform duration-300 hover:-translate-y-2 hover:shadow-xl">
                   <CardHeader>
