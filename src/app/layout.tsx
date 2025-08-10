@@ -2,9 +2,9 @@ import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from '@/hooks/use-auth';
-import { Playfair_Display } from 'next/font/google';
+import { EB_Garamond } from 'next/font/google';
 
-const playfair = Playfair_Display({
+const garamond = EB_Garamond({
   subsets: ['latin'],
   variable: '--font-sans',
 });
@@ -22,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`font-sans antialiased ${playfair.variable}`}>
+      <body className={`font-sans antialiased ${garamond.variable}`}>
         <AuthProvider>
           {children}
         </AuthProvider>
