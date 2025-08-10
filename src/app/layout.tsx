@@ -2,11 +2,12 @@ import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from '@/hooks/use-auth';
-import { EB_Garamond } from 'next/font/google';
+import { Roboto } from 'next/font/google';
 
-const garamond = EB_Garamond({
+const roboto = Roboto({
   subsets: ['latin'],
   variable: '--font-sans',
+  weight: ['400', '500', '700']
 });
 
 
@@ -22,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`font-sans antialiased ${garamond.variable}`}>
+      <body className={`font-sans antialiased ${roboto.variable}`}>
         <AuthProvider>
           {children}
         </AuthProvider>
