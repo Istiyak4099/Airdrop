@@ -24,7 +24,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-sans)"],
+        sans: ["sans-serif"],
       },
       colors: {
         background: 'hsl(var(--background))',
