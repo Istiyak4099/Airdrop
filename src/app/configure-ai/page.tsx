@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useTransition } from 'react';
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -21,9 +21,56 @@ import {
 } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { Building, Mic, List, Database, Settings2, Bot, Send, ChevronDown, ChevronUp } from "lucide-react"
+import { Skeleton } from '@/components/ui/skeleton';
+import { generateWelcomeMessage } from '@/ai/flows/generate-welcome-message';
+
+interface Message {
+  id: number;
+  sender: 'user' | 'ai';
+  content: string | React.ReactNode;
+}
 
 function AiResponsePreview() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
+  const [input, setInput] = useState('');
+  const [messages, setMessages] = useState<Message[]>([
+    { id: 1, sender: 'ai', content: 'Hi! How can I help you test my responses today?' },
+  ]);
+  const [isPending, startTransition] = useTransition();
+
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    const userMessage: Message = { id: Date.now(), sender: 'user', content: input };
+    setMessages(prev => [...prev, userMessage]);
+    setInput('');
+    
+    startTransition(async () => {
+        const aiMessageContent = (
+            <div className="flex items-center space-x-2">
+                <Skeleton className="h-4 w-4 rounded-full" />
+                <Skeleton className="h-4 w-20" />
+            </div>
+        );
+        const aiMessage: Message = { id: Date.now() + 1, sender: 'ai', content: aiMessageContent };
+        setMessages(prev => [...prev, aiMessage]);
+
+        try {
+            const { welcomeMessage } = await generateWelcomeMessage({ 
+                customerName: 'Test User',
+                businessName: 'Your Business',
+                socialMediaPlatform: 'Preview Chat'
+            });
+
+            const finalAiMessage: Message = { id: Date.now() + 1, sender: 'ai', content: `This is a test response: ${welcomeMessage}` };
+            setMessages(prev => [...prev.slice(0, -1), finalAiMessage]);
+        } catch (error) {
+            const errorMessage: Message = { id: Date.now() + 1, sender: 'ai', content: "Sorry, I couldn't generate a response." };
+            setMessages(prev => [...prev.slice(0, -1), errorMessage]);
+        }
+    });
+  };
 
   return (
     <div className="fixed bottom-0 right-0 w-full md:w-1/3 md:right-8 md:bottom-0 z-20">
@@ -38,22 +85,37 @@ function AiResponsePreview() {
         {isOpen && (
           <>
             <CardContent className="p-4 h-64 overflow-y-auto space-y-4">
-              <div className="flex items-end gap-2 justify-start">
-                  <Avatar className="h-8 w-8">
-                      <AvatarFallback>AI</AvatarFallback>
-                  </Avatar>
-                  <div className="max-w-xs lg:max-w-md rounded-lg p-3 text-sm bg-muted">
-                      <p>Hi! How can I help you test my responses today?</p>
-                  </div>
-              </div>
+              {messages.map((message) => (
+                <div key={message.id} className={`flex items-end gap-2 ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    {message.sender === 'ai' && (
+                        <Avatar className="h-8 w-8">
+                            <AvatarFallback>AI</AvatarFallback>
+                        </Avatar>
+                    )}
+                    <div className={`max-w-xs lg:max-w-md rounded-lg p-3 text-sm ${message.sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                        <p>{message.content}</p>
+                    </div>
+                    {message.sender === 'user' && (
+                        <Avatar className="h-8 w-8">
+                            <AvatarFallback>U</AvatarFallback>
+                        </Avatar>
+                    )}
+                </div>
+              ))}
             </CardContent>
             <CardFooter className="p-4 border-t">
-              <div className="relative w-full">
-                <Input placeholder="Test your AI..." className="pr-12" />
-                <Button size="icon" className="absolute top-1/2 right-1.5 transform -translate-y-1/2 h-7 w-7">
+              <form onSubmit={handleSendMessage} className="relative w-full">
+                <Input 
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Test your AI..." 
+                    className="pr-12" 
+                    disabled={isPending}
+                />
+                <Button type="submit" size="icon" className="absolute top-1/2 right-1.5 transform -translate-y-1/2 h-7 w-7" disabled={isPending}>
                   <Send className="h-4 w-4" />
                 </Button>
-              </div>
+              </form>
             </CardFooter>
           </>
         )}
@@ -63,7 +125,11 @@ function AiResponsePreview() {
 }
 
 function Avatar({ children, className }: { children: React.ReactNode, className?: string }) {
-    return <div className={`flex items-center justify-center rounded-full bg-primary/20 text-primary ${className}`}>{children}</div>
+    return (
+        <div className={`flex items-center justify-center rounded-full bg-primary/20 text-primary ${className}`}>
+            {children}
+        </div>
+    );
 }
 
 function AvatarFallback({ children }: { children: React.ReactNode }) {
