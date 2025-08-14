@@ -22,7 +22,7 @@ export function SignupForm() {
 
   useEffect(() => {
     if (user) {
-      router.push('/');
+      router.push('/dashboard');
     }
   }, [user, router]);
 
@@ -35,7 +35,7 @@ export function SignupForm() {
       <Card className="mx-auto max-w-sm z-10 shadow-xl">
         <CardHeader>
           <div className="flex justify-center mb-4">
-             <Link href="/landing" className="flex items-center gap-2 font-bold text-xl">
+             <Link href="/" className="flex items-center gap-2 font-bold text-xl">
                 <Bot className="h-8 w-8 text-primary" />
                 <span>Airdrop</span>
             </Link>

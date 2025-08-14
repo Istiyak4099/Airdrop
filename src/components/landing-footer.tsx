@@ -7,7 +7,7 @@ export function LandingFooter() {
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
-            <Link href="/landing" className="flex items-center gap-2 font-bold text-lg">
+            <Link href="/" className="flex items-center gap-2 font-bold text-lg">
               <Bot className="h-7 w-7 text-primary" />
               <span>Airdrop</span>
             </Link>
@@ -21,8 +21,8 @@ export function LandingFooter() {
           <div>
             <h4 className="font-semibold">Product</h4>
             <ul className="mt-4 space-y-2 text-sm">
-              <li><Link href="/landing#features" className="text-muted-foreground hover:text-primary">Features</Link></li>
-              <li><Link href="/landing#pricing" className="text-muted-foreground hover:text-primary">Pricing</Link></li>
+              <li><Link href="/#features" className="text-muted-foreground hover:text-primary">Features</Link></li>
+              <li><Link href="/#pricing" className="text-muted-foreground hover:text-primary">Pricing</Link></li>
               <li><Link href="/login" className="text-muted-foreground hover:text-primary">Login</Link></li>
               <li><Link href="/signup" className="text-muted-foreground hover:text-primary">Sign Up</Link></li>
             </ul>
