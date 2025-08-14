@@ -115,7 +115,7 @@ export default function SettingsPage() {
                             <SelectItem value="neutral">Neutral & Direct</SelectItem>
                             <SelectItem value="enthusiastic">Enthusiastic & Upbeat</SelectItem>
                         </SelectContent>
-                        </Select>
+                        </select>
                    </div>
                 </CardContent>
                 <CardFooter>
