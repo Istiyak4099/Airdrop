@@ -23,6 +23,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Building, Mic, List, Database, Settings2, Bot, Send, ChevronDown, ChevronUp } from "lucide-react"
 import { Skeleton } from '@/components/ui/skeleton';
 import { generateWelcomeMessage } from '@/ai/flows/generate-welcome-message';
+import { useToast } from '@/hooks/use-toast';
 
 interface Message {
   id: number;
@@ -138,6 +139,20 @@ function AvatarFallback({ children }: { children: React.ReactNode }) {
 
 
 export default function ConfigureAiPage() {
+    const { toast } = useToast();
+    const [companyName, setCompanyName] = useState('');
+    const [industry, setIndustry] = useState('');
+    const [description, setDescription] = useState('');
+
+    const handleSaveChanges = () => {
+        // Here you would typically save the data to a database
+        console.log({ companyName, industry, description });
+        toast({
+            title: "Settings Saved!",
+            description: "Your business basics have been updated.",
+        })
+    };
+
   return (
     <div className="space-y-6 pb-24">
         <div>
@@ -175,19 +190,34 @@ export default function ConfigureAiPage() {
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
                         <Label htmlFor="company-name">Company Name</Label>
-                        <Input id="company-name" placeholder="e.g., Airdrop Inc." />
+                        <Input 
+                            id="company-name" 
+                            placeholder="e.g., Airdrop Inc." 
+                            value={companyName}
+                            onChange={(e) => setCompanyName(e.target.value)}
+                        />
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="industry">Industry</Label>
-                        <Input id="industry" placeholder="e.g., E-commerce, Technology" />
+                        <Input 
+                            id="industry" 
+                            placeholder="e.g., E-commerce, Technology" 
+                            value={industry}
+                            onChange={(e) => setIndustry(e.target.value)}
+                        />
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="description">Company Description</Label>
-                        <Textarea id="description" placeholder="Describe what your company does, its mission, and values." />
+                        <Textarea 
+                            id="description" 
+                            placeholder="Describe what your company does, its mission, and values."
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                        />
                     </div>
                 </CardContent>
                 <CardFooter>
-                    <Button>Save Changes</Button>
+                    <Button onClick={handleSaveChanges}>Save Changes</Button>
                 </CardFooter>
                 </Card>
             </TabsContent>
@@ -240,3 +270,5 @@ export default function ConfigureAiPage() {
     </div>
   )
 }
+
+    
