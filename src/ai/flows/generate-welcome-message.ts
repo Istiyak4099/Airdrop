@@ -17,6 +17,7 @@ const GenerateWelcomeMessageInputSchema = z.object({
   customerName: z.string().describe('The name of the customer.'),
   socialMediaPlatform: z.string().describe('The social media platform where the interaction is taking place (e.g., Facebook, Instagram).'),
   userMessage: z.string().describe('The user\'s message to the business.'),
+  userId: z.string().describe("The user's unique ID."),
 });
 export type GenerateWelcomeMessageInput = z.infer<typeof GenerateWelcomeMessageInputSchema>;
 
@@ -61,16 +62,17 @@ const generateWelcomeMessageFlow = ai.defineFlow(
     inputSchema: GenerateWelcomeMessageInputSchema,
     outputSchema: GenerateWelcomeMessageOutputSchema,
   },
-  async (input, context) => {
-    // In a real app, you'd get the logged-in user's ID
-    const userId = context.auth?.uid;
+  async (input) => {
+    const { userId } = input;
     if (!userId) {
         throw new Error('User not authenticated');
     } 
     const profile = await getBusinessProfile(userId);
 
     const {output} = await prompt({
-      ...input,
+      customerName: input.customerName,
+      socialMediaPlatform: input.socialMediaPlatform,
+      userMessage: input.userMessage,
       businessName: profile?.companyName || "the business",
       businessDescription: profile?.description,
     });

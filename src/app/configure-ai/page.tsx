@@ -65,7 +65,8 @@ function AiResponsePreview() {
             const { welcomeMessage } = await generateWelcomeMessage({ 
                 customerName: 'Test User',
                 socialMediaPlatform: 'Preview Chat',
-                userMessage: currentInput
+                userMessage: currentInput,
+                userId: user.uid
             });
 
             const finalAiMessage: Message = { id: Date.now() + 1, sender: 'ai', content: welcomeMessage };
