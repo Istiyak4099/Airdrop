@@ -116,9 +116,9 @@ function AiResponsePreview() {
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Test your AI..." 
                     className="pr-12" 
-                    disabled={isPending}
+                    disabled={isPending || !user}
                 />
-                <Button type="submit" size="icon" className="absolute top-1/2 right-1.5 transform -translate-y-1/2 h-7 w-7" disabled={isPending}>
+                <Button type="submit" size="icon" className="absolute top-1/2 right-1.5 transform -translate-y-1/2 h-7 w-7" disabled={isPending || !user}>
                   <Send className="h-4 w-4" />
                 </Button>
               </form>
@@ -280,7 +280,7 @@ export default function ConfigureAiPage() {
                     </div>
                 </CardContent>
                 <CardFooter>
-                    <Button onClick={handleSaveChanges} disabled={isSaving}>{isSaving ? 'Saving...' : 'Save Changes'}</Button>
+                    <Button onClick={handleSaveChanges} disabled={isSaving || !user}>{isSaving ? 'Saving...' : 'Save Changes'}</Button>
                 </CardFooter>
                 </Card>
             </TabsContent>

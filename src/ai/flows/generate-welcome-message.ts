@@ -60,11 +60,6 @@ const generateWelcomeMessageFlow = ai.defineFlow(
     name: 'generateWelcomeMessageFlow',
     inputSchema: GenerateWelcomeMessageInputSchema,
     outputSchema: GenerateWelcomeMessageOutputSchema,
-    auth: (auth, input) => {
-        if (!auth) {
-            throw new Error('Must be authenticated');
-        }
-    }
   },
   async (input, context) => {
     // In a real app, you'd get the logged-in user's ID
