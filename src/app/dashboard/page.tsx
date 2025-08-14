@@ -6,6 +6,8 @@ import {
   Link as LinkIcon,
   MessageSquare,
   Package,
+  CreditCard,
+  MessageCircle,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -97,6 +99,42 @@ export default function Dashboard() {
             </Button>
           </CardContent>
         </Card>
+      </div>
+
+      <div>
+        <h2 className="text-xl font-semibold mb-4">Quick Access</h2>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 md:gap-8">
+            <Card className="flex flex-col items-center justify-center text-center p-6">
+                <div className="p-4 bg-primary/10 rounded-full mb-4">
+                    <MessageCircle className="h-8 w-8 text-primary" />
+                </div>
+                <CardTitle className="text-xl mb-2">AI Chat Assistant</CardTitle>
+                <CardDescription className="mb-4">Start a conversation with our AI assistant</CardDescription>
+                <Button asChild>
+                    <Link href="/dashboard/inbox">Chat Now</Link>
+                </Button>
+            </Card>
+            <Card className="flex flex-col items-center justify-center text-center p-6">
+                 <div className="p-4 bg-primary/10 rounded-full mb-4">
+                    <Facebook className="h-8 w-8 text-primary" />
+                </div>
+                <CardTitle className="text-xl mb-2">Connect Social Media</CardTitle>
+                <CardDescription className="mb-4">Integrate your social media business pages</CardDescription>
+                <Button asChild>
+                    <Link href="/dashboard/settings">Connect</Link>
+                </Button>
+            </Card>
+            <Card className="flex flex-col items-center justify-center text-center p-6">
+                 <div className="p-4 bg-primary/10 rounded-full mb-4">
+                    <CreditCard className="h-8 w-8 text-primary" />
+                </div>
+                <CardTitle className="text-xl mb-2">Subscription Plans</CardTitle>
+                <CardDescription className="mb-4">Explore our various subscription plans</CardDescription>
+                <Button asChild variant="secondary">
+                    <Link href="/#pricing">View Plans</Link>
+                </Button>
+            </Card>
+        </div>
       </div>
     </>
   )
