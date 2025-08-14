@@ -62,11 +62,8 @@ function AiResponsePreview() {
         setMessages(prev => [...prev, aiMessage]);
 
         try {
-            const businessProfile = await getBusinessProfile(user.uid);
             const { welcomeMessage } = await generateWelcomeMessage({ 
                 customerName: 'Test User',
-                // We don't need to pass the business name here anymore as the flow will fetch it.
-                businessName: businessProfile?.companyName || 'Your Business',
                 socialMediaPlatform: 'Preview Chat',
                 userMessage: currentInput
             });

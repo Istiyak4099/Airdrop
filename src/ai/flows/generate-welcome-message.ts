@@ -12,7 +12,6 @@
 import {ai} from '@/ai/genkit';
 import { getBusinessProfile } from '@/services/business-profile-service';
 import {z} from 'genkit';
-import { auth } from '@/lib/firebase';
 
 const GenerateWelcomeMessageInputSchema = z.object({
   customerName: z.string().describe('The name of the customer.'),
@@ -67,7 +66,7 @@ const generateWelcomeMessageFlow = ai.defineFlow(
         }
     }
   },
-  async (input, streamingCallback, context) => {
+  async (input, context) => {
     // In a real app, you'd get the logged-in user's ID
     const userId = context.auth?.uid;
     if (!userId) {
