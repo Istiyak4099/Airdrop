@@ -1,5 +1,6 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut as firebaseSignOut } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   "projectId": "aether-assistant-4rs4r",
@@ -12,6 +13,7 @@ const firebaseConfig = {
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
+const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
 const signInWithGoogle = () => {
@@ -22,4 +24,4 @@ const signOut = () => {
     return firebaseSignOut(auth);
 }
 
-export { auth, signInWithGoogle, signOut };
+export { auth, db, signInWithGoogle, signOut };

@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useTransition } from 'react';
+import React, { useState, useTransition, useEffect } from 'react';
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -24,6 +24,8 @@ import { Building, Mic, List, Database, Settings2, Bot, Send, ChevronDown, Chevr
 import { Skeleton } from '@/components/ui/skeleton';
 import { generateWelcomeMessage } from '@/ai/flows/generate-welcome-message';
 import { useToast } from '@/hooks/use-toast';
+import { saveBusinessProfile, getBusinessProfile, BusinessProfile } from '@/services/business-profile-service';
+import { useAuth } from '@/hooks/use-auth';
 
 interface Message {
   id: number;
@@ -32,6 +34,7 @@ interface Message {
 }
 
 function AiResponsePreview() {
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(true);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([
@@ -41,10 +44,11 @@ function AiResponsePreview() {
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || !user) return;
 
     const userMessage: Message = { id: Date.now(), sender: 'user', content: input };
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = input;
     setInput('');
     
     startTransition(async () => {
@@ -58,15 +62,18 @@ function AiResponsePreview() {
         setMessages(prev => [...prev, aiMessage]);
 
         try {
+            const businessProfile = await getBusinessProfile(user.uid);
             const { welcomeMessage } = await generateWelcomeMessage({ 
                 customerName: 'Test User',
-                businessName: 'Your Business',
-                socialMediaPlatform: 'Preview Chat'
+                businessName: businessProfile?.companyName || 'Your Business',
+                socialMediaPlatform: 'Preview Chat',
+                userMessage: currentInput
             });
 
-            const finalAiMessage: Message = { id: Date.now() + 1, sender: 'ai', content: `This is a test response: ${welcomeMessage}` };
+            const finalAiMessage: Message = { id: Date.now() + 1, sender: 'ai', content: welcomeMessage };
             setMessages(prev => [...prev.slice(0, -1), finalAiMessage]);
         } catch (error) {
+            console.error(error);
             const errorMessage: Message = { id: Date.now() + 1, sender: 'ai', content: "Sorry, I couldn't generate a response." };
             setMessages(prev => [...prev.slice(0, -1), errorMessage]);
         }
@@ -94,7 +101,7 @@ function AiResponsePreview() {
                         </Avatar>
                     )}
                     <div className={`max-w-xs lg:max-w-md rounded-lg p-3 text-sm ${message.sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-                        <p>{message.content}</p>
+                        {typeof message.content === 'string' ? <p>{message.content}</p> : message.content}
                     </div>
                     {message.sender === 'user' && (
                         <Avatar className="h-8 w-8">
@@ -140,18 +147,75 @@ function AvatarFallback({ children }: { children: React.ReactNode }) {
 
 export default function ConfigureAiPage() {
     const { toast } = useToast();
+    const { user, loading } = useAuth();
     const [companyName, setCompanyName] = useState('');
     const [industry, setIndustry] = useState('');
     const [description, setDescription] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
 
-    const handleSaveChanges = () => {
-        // Here you would typically save the data to a database
-        console.log({ companyName, industry, description });
-        toast({
-            title: "Settings Saved!",
-            description: "Your business basics have been updated.",
-        })
+    useEffect(() => {
+        if (user) {
+            getBusinessProfile(user.uid).then(profile => {
+                if (profile) {
+                    setCompanyName(profile.companyName);
+                    setIndustry(profile.industry);
+                    setDescription(profile.description);
+                }
+            });
+        }
+    }, [user]);
+
+    const handleSaveChanges = async () => {
+        if (!user) {
+            toast({
+                title: "Error",
+                description: "You must be logged in to save changes.",
+                variant: "destructive"
+            });
+            return;
+        }
+
+        setIsSaving(true);
+        try {
+            await saveBusinessProfile({ companyName, industry, description }, user.uid);
+            toast({
+                title: "Settings Saved!",
+                description: "Your business basics have been updated.",
+            });
+        } catch (error) {
+            console.error("Failed to save profile:", error);
+            toast({
+                title: "Save Failed",
+                description: "Could not save your business profile. Please try again.",
+                variant: "destructive"
+            });
+        } finally {
+            setIsSaving(false);
+        }
     };
+
+    if (loading) {
+        return (
+            <div className="space-y-6 pb-24">
+                <Skeleton className="h-10 w-1/3" />
+                <Skeleton className="h-8 w-2/3" />
+                <Card>
+                    <CardHeader>
+                        <Skeleton className="h-8 w-1/4" />
+                        <Skeleton className="h-6 w-1/2" />
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <Skeleton className="h-10 w-full" />
+                        <Skeleton className="h-10 w-full" />
+                        <Skeleton className="h-24 w-full" />
+                    </CardContent>
+                    <CardFooter>
+                        <Skeleton className="h-10 w-24" />
+                    </CardFooter>
+                </Card>
+            </div>
+        )
+    }
 
   return (
     <div className="space-y-6 pb-24">
@@ -217,7 +281,7 @@ export default function ConfigureAiPage() {
                     </div>
                 </CardContent>
                 <CardFooter>
-                    <Button onClick={handleSaveChanges}>Save Changes</Button>
+                    <Button onClick={handleSaveChanges} disabled={isSaving}>{isSaving ? 'Saving...' : 'Save Changes'}</Button>
                 </CardFooter>
                 </Card>
             </TabsContent>
@@ -270,5 +334,3 @@ export default function ConfigureAiPage() {
     </div>
   )
 }
-
-    
