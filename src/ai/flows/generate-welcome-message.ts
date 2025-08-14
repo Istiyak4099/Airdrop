@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -15,7 +16,6 @@ import { auth } from '@/lib/firebase';
 
 const GenerateWelcomeMessageInputSchema = z.object({
   customerName: z.string().describe('The name of the customer.'),
-  businessName: z.string().describe('The name of the business.'),
   socialMediaPlatform: z.string().describe('The social media platform where the interaction is taking place (e.g., Facebook, Instagram).'),
   userMessage: z.string().describe('The user\'s message to the business.'),
 });
@@ -40,19 +40,19 @@ const prompt = ai.definePrompt({
     businessDescription: z.string().optional(),
   })},
   output: {schema: GenerateWelcomeMessageOutputSchema},
-  prompt: `You are an AI assistant for {{businessName}}. Your goal is to provide helpful and friendly responses to customer inquiries on social media.
+  prompt: `You are an AI assistant for {{businessName}}. Your goal is to provide helpful and friendly responses to customer inquiries on social media. Your response should be based on the business description.
 
   Here is some information about the business:
   {{#if businessDescription}}
   Business Description: {{{businessDescription}}}
   {{else}}
-  No business description provided.
+  No business description provided. You should state that you do not have enough information.
   {{/if}}
   
   A customer named {{customerName}} has sent the following message on {{socialMediaPlatform}}:
   "{{{userMessage}}}"
 
-  Based on the business information and the customer's message, craft a helpful and welcoming response.
+  Based on the business information and the customer's message, craft a helpful and welcoming response. Do not say things like "This is a test response".
   `,
 });
 
@@ -61,14 +61,23 @@ const generateWelcomeMessageFlow = ai.defineFlow(
     name: 'generateWelcomeMessageFlow',
     inputSchema: GenerateWelcomeMessageInputSchema,
     outputSchema: GenerateWelcomeMessageOutputSchema,
+    auth: (auth, input) => {
+        if (!auth) {
+            throw new Error('Must be authenticated');
+        }
+    }
   },
-  async input => {
+  async (input, streamingCallback, context) => {
     // In a real app, you'd get the logged-in user's ID
-    const userId = auth.currentUser?.uid || 'test-user'; 
+    const userId = context.auth?.uid;
+    if (!userId) {
+        throw new Error('User not authenticated');
+    } 
     const profile = await getBusinessProfile(userId);
 
     const {output} = await prompt({
       ...input,
+      businessName: profile?.companyName || "the business",
       businessDescription: profile?.description,
     });
     return output!;
