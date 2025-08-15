@@ -20,7 +20,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
-import { Building, Mic, List, Database, Settings2, Bot, Send, ChevronDown, ChevronUp } from "lucide-react"
+import { Building, Mic, List, Settings2, Bot, Send, ChevronDown, ChevronUp, Package, HelpCircle } from "lucide-react"
 import { Skeleton } from '@/components/ui/skeleton';
 import { generateWelcomeMessage } from '@/ai/flows/generate-welcome-message';
 import { useToast } from '@/hooks/use-toast';
@@ -225,18 +225,21 @@ export default function ConfigureAiPage() {
             </p>
         </div>
         <Tabs defaultValue="business-basics" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 h-auto">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-6 h-auto">
                 <TabsTrigger value="business-basics" className="flex items-center gap-2">
                     <Building className="h-4 w-4" /> Business Basics
+                </TabsTrigger>
+                <TabsTrigger value="products-services" className="flex items-center gap-2">
+                    <Package className="h-4 w-4" /> Products & Services
+                </TabsTrigger>
+                <TabsTrigger value="faqs" className="flex items-center gap-2">
+                    <HelpCircle className="h-4 w-4" /> FAQs
                 </TabsTrigger>
                 <TabsTrigger value="brand-voice" className="flex items-center gap-2">
                     <Mic className="h-4 w-4" /> Brand Voice
                 </TabsTrigger>
                 <TabsTrigger value="response-guidelines" className="flex items-center gap-2">
                     <List className="h-4 w-4" /> Response Guidelines
-                </TabsTrigger>
-                <TabsTrigger value="knowledge-base" className="flex items-center gap-2">
-                    <Database className="h-4 w-4" /> Knowledge Base
                 </TabsTrigger>
                 <TabsTrigger value="advanced-settings" className="flex items-center gap-2">
                     <Settings2 className="h-4 w-4" /> Advanced Settings
@@ -285,6 +288,28 @@ export default function ConfigureAiPage() {
                 </CardFooter>
                 </Card>
             </TabsContent>
+             <TabsContent value="products-services">
+                 <Card>
+                    <CardHeader>
+                        <CardTitle>Products & Services</CardTitle>
+                        <CardDescription>Add details about the products and services you offer.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <p>Configure your products and services here.</p>
+                    </CardContent>
+                 </Card>
+            </TabsContent>
+            <TabsContent value="faqs">
+                 <Card>
+                    <CardHeader>
+                        <CardTitle>FAQs</CardTitle>
+                        <CardDescription>Add frequently asked questions and their answers.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <p>Configure your FAQs here.</p>
+                    </CardContent>
+                 </Card>
+            </TabsContent>
             <TabsContent value="brand-voice">
                  <Card>
                     <CardHeader>
@@ -304,17 +329,6 @@ export default function ConfigureAiPage() {
                     </CardHeader>
                     <CardContent>
                         <p>Set up response guidelines here.</p>
-                    </CardContent>
-                 </Card>
-            </TabsContent>
-            <TabsContent value="knowledge-base">
-                 <Card>
-                    <CardHeader>
-                        <CardTitle>Knowledge Base</CardTitle>
-                        <CardDescription>Upload documents or add text for the AI to learn from.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <p>Manage your knowledge base here.</p>
                     </CardContent>
                  </Card>
             </TabsContent>
