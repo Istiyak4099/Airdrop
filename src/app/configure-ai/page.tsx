@@ -22,7 +22,7 @@ import { saveBusinessProfile, getBusinessProfile, BusinessProfile } from '@/serv
 import { useAuth } from '@/hooks/use-auth';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Slider } from '@/components/ui/slider';
+import { Switch } from '@/components/ui/switch';
 
 
 interface Message {
@@ -45,10 +45,10 @@ interface FAQ {
 }
 
 interface BrandVoice {
-    professionalism: number[];
-    verbosity: number[];
-    formality: number[];
-    humor: number[];
+    professionalism: boolean;
+    verbosity: boolean;
+    formality: boolean;
+    humor: boolean;
 }
 
 
@@ -177,10 +177,10 @@ export default function ConfigureAiPage() {
         { id: Date.now(), question: '', answer: '' },
     ]);
     const [brandVoice, setBrandVoice] = useState<BrandVoice>({
-        professionalism: [50],
-        verbosity: [50],
-        formality: [50],
-        humor: [50],
+        professionalism: false,
+        verbosity: false,
+        formality: false,
+        humor: false,
     });
     const [writingStyleExample, setWritingStyleExample] = useState('');
 
@@ -250,7 +250,7 @@ export default function ConfigureAiPage() {
         setFaqs(prev => prev.map(faq => faq.id === id ? { ...faq, [field]: value } : faq));
     };
     
-    const handleBrandVoiceChange = (field: keyof BrandVoice, value: number[]) => {
+    const handleBrandVoiceChange = (field: keyof BrandVoice, value: boolean) => {
         setBrandVoice(prev => ({ ...prev, [field]: value }));
     };
 
@@ -494,26 +494,42 @@ export default function ConfigureAiPage() {
                     <CardContent className="space-y-8 pt-4">
                         <div>
                             <Label className="mb-4 block">Tone of Voice</Label>
-                            <div className="space-y-6">
-                                <div className="grid grid-cols-[100px_1fr_100px] items-center gap-4">
-                                    <span className="text-sm text-muted-foreground text-right">Professional</span>
-                                    <Slider value={brandVoice.professionalism} onValueChange={(value) => handleBrandVoiceChange('professionalism', value)} />
-                                    <span className="text-sm text-muted-foreground">Casual</span>
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between rounded-lg border p-3">
+                                    <Label htmlFor="professionalism-switch" className={brandVoice.professionalism ? 'text-muted-foreground' : ''}>Professional</Label>
+                                    <Switch 
+                                        id="professionalism-switch" 
+                                        checked={brandVoice.professionalism}
+                                        onCheckedChange={(value) => handleBrandVoiceChange('professionalism', value)}
+                                    />
+                                    <Label htmlFor="professionalism-switch" className={!brandVoice.professionalism ? 'text-muted-foreground' : ''}>Casual</Label>
                                 </div>
-                                <div className="grid grid-cols-[100px_1fr_100px] items-center gap-4">
-                                    <span className="text-sm text-muted-foreground text-right">Detailed</span>
-                                    <Slider value={brandVoice.verbosity} onValueChange={(value) => handleBrandVoiceChange('verbosity', value)} />
-                                    <span className="text-sm text-muted-foreground">Concise</span>
+                                <div className="flex items-center justify-between rounded-lg border p-3">
+                                    <Label htmlFor="verbosity-switch" className={brandVoice.verbosity ? 'text-muted-foreground' : ''}>Detailed</Label>
+                                    <Switch 
+                                        id="verbosity-switch"
+                                        checked={brandVoice.verbosity}
+                                        onCheckedChange={(value) => handleBrandVoiceChange('verbosity', value)}
+                                    />
+                                    <Label htmlFor="verbosity-switch" className={!brandVoice.verbosity ? 'text-muted-foreground' : ''}>Concise</Label>
                                 </div>
-                                <div className="grid grid-cols-[100px_1fr_100px] items-center gap-4">
-                                    <span className="text-sm text-muted-foreground text-right">Formal</span>
-                                    <Slider value={brandVoice.formality} onValueChange={(value) => handleBrandVoiceChange('formality', value)} />
-                                    <span className="text-sm text-muted-foreground">Friendly</span>
+                                <div className="flex items-center justify-between rounded-lg border p-3">
+                                    <Label htmlFor="formality-switch" className={brandVoice.formality ? 'text-muted-foreground' : ''}>Formal</Label>
+                                    <Switch 
+                                        id="formality-switch"
+                                        checked={brandVoice.formality}
+                                        onCheckedChange={(value) => handleBrandVoiceChange('formality', value)}
+                                    />
+                                    <Label htmlFor="formality-switch" className={!brandVoice.formality ? 'text-muted-foreground' : ''}>Friendly</Label>
                                 </div>
-                                <div className="grid grid-cols-[100px_1fr_100px] items-center gap-4">
-                                    <span className="text-sm text-muted-foreground text-right">Serious</span>
-                                    <Slider value={brandVoice.humor} onValueChange={(value) => handleBrandVoiceChange('humor', value)} />
-                                    <span className="text-sm text-muted-foreground">Humorous</span>
+                                <div className="flex items-center justify-between rounded-lg border p-3">
+                                    <Label htmlFor="humor-switch" className={brandVoice.humor ? 'text-muted-foreground' : ''}>Serious</Label>
+                                    <Switch 
+                                        id="humor-switch"
+                                        checked={brandVoice.humor}
+                                        onCheckedChange={(value) => handleBrandVoiceChange('humor', value)}
+                                    />
+                                    <Label htmlFor="humor-switch" className={!brandVoice.humor ? 'text-muted-foreground' : ''}>Humorous</Label>
                                 </div>
                             </div>
                         </div>
@@ -563,8 +579,3 @@ export default function ConfigureAiPage() {
     </div>
   )
 }
-
-    
-    
-
-    
