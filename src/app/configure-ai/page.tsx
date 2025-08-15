@@ -21,6 +21,7 @@ import { useToast } from '@/hooks/use-toast';
 import { saveBusinessProfile, getBusinessProfile, BusinessProfile } from '@/services/business-profile-service';
 import { useAuth } from '@/hooks/use-auth';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 
 interface Message {
@@ -143,7 +144,7 @@ function AvatarFallback({ children }: { children: React.ReactNode }) {
 export default function ConfigureAiPage() {
     const { toast } = useToast();
     const { user, loading } = useAuth();
-    const [companyName, setCompanyName] = useState('');
+    const [businessName, setBusinessName] = useState('');
     const [industry, setIndustry] = useState('');
     const [description, setDescription] = useState('');
     const [isSaving, setIsSaving] = useState(false);
@@ -152,7 +153,7 @@ export default function ConfigureAiPage() {
         if (user) {
             getBusinessProfile(user.uid).then(profile => {
                 if (profile) {
-                    setCompanyName(profile.companyName);
+                    setBusinessName(profile.companyName);
                     setIndustry(profile.industry);
                     setDescription(profile.description);
                 }
@@ -172,7 +173,7 @@ export default function ConfigureAiPage() {
 
         setIsSaving(true);
         try {
-            await saveBusinessProfile({ companyName, industry, description }, user.uid);
+            await saveBusinessProfile({ companyName: businessName, industry, description }, user.uid);
             toast({
                 title: "Settings Saved!",
                 description: "Your business basics have been updated.",
@@ -258,22 +259,32 @@ export default function ConfigureAiPage() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="company-name">Company Name</Label>
+                            <Label htmlFor="business-name">Business Name</Label>
                             <Input 
-                                id="company-name" 
-                                placeholder="e.g., Airdrop Inc." 
-                                value={companyName}
-                                onChange={(e) => setCompanyName(e.target.value)}
+                                id="business-name" 
+                                placeholder="e.g., Aether Assistant" 
+                                value={businessName}
+                                onChange={(e) => setBusinessName(e.target.value)}
                             />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="industry">Industry</Label>
-                            <Input 
-                                id="industry" 
-                                placeholder="e.g., E-commerce, Technology" 
-                                value={industry}
-                                onChange={(e) => setIndustry(e.target.value)}
-                            />
+                            <Select value={industry} onValueChange={setIndustry}>
+                                <SelectTrigger id="industry">
+                                    <SelectValue placeholder="Select an industry" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="technology">Technology</SelectItem>
+                                    <SelectItem value="e-commerce">E-commerce</SelectItem>
+                                    <SelectItem value="health">Health & Wellness</SelectItem>
+                                    <SelectItem value="finance">Finance</SelectItem>
+                                    <SelectItem value="education">Education</SelectItem>
+                                    <SelectItem value="hospitality">Hospitality</SelectItem>
+                                    <SelectItem value="retail">Retail</SelectItem>
+                                    <SelectItem value="real-estate">Real Estate</SelectItem>
+                                    <SelectItem value="other">Other</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="description">Company Description</Label>
@@ -351,3 +362,6 @@ export default function ConfigureAiPage() {
     </div>
   )
 }
+
+
+    
