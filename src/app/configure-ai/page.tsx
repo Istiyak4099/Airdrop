@@ -511,7 +511,7 @@ export default function ConfigureAiPage() {
                                 </div>
                                 <div className="grid grid-cols-[100px_1fr_100px] items-center gap-4">
                                     <span className="text-sm text-muted-foreground text-right">Serious</span>
-                                    <Slider value={brandVoice.humor} onValue-change={(value) => handleBrandVoiceChange('humor', value)} />
+                                    <Slider value={brandVoice.humor} onValueChange={(value) => handleBrandVoiceChange('humor', value)} />
                                     <span className="text-sm text-muted-foreground">Humorous</span>
                                 </div>
                             </div>
@@ -550,4 +550,5 @@ export default function ConfigureAiPage() {
   )
 }
 
+    
     
