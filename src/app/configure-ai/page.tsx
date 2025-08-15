@@ -37,6 +37,13 @@ interface Product {
   description: string;
 }
 
+interface FAQ {
+  id: number;
+  question: string;
+  answer: string;
+}
+
+
 function AiResponsePreview() {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(true);
@@ -158,6 +165,9 @@ export default function ConfigureAiPage() {
     const [products, setProducts] = useState<Product[]>([
         { id: Date.now(), name: '', price: '', description: '' },
     ]);
+    const [faqs, setFaqs] = useState<FAQ[]>([
+        { id: Date.now(), question: '', answer: '' },
+    ]);
 
     useEffect(() => {
         if (user) {
@@ -210,6 +220,18 @@ export default function ConfigureAiPage() {
 
     const handleProductChange = (id: number, field: keyof Omit<Product, 'id'>, value: string) => {
         setProducts(prev => prev.map(p => p.id === id ? { ...p, [field]: value } : p));
+    };
+    
+    const addFaq = () => {
+        setFaqs(prev => [...prev, { id: Date.now(), question: '', answer: '' }]);
+    };
+
+    const removeFaq = (id: number) => {
+        setFaqs(prev => prev.filter(faq => faq.id !== id));
+    };
+
+    const handleFaqChange = (id: number, field: keyof Omit<FAQ, 'id'>, value: string) => {
+        setFaqs(prev => prev.map(faq => faq.id === id ? { ...faq, [field]: value } : faq));
     };
 
 
@@ -396,12 +418,51 @@ export default function ConfigureAiPage() {
             <TabsContent value="faqs">
                  <Card>
                     <CardHeader>
-                        <CardTitle>FAQs</CardTitle>
+                        <CardTitle>Frequently Asked Questions</CardTitle>
                         <CardDescription>Add frequently asked questions and their answers.</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <p>Configure your FAQs here.</p>
+                    <CardContent className="space-y-4">
+                        {faqs.map((faq) => (
+                            <div key={faq.id} className="p-4 border rounded-lg space-y-3">
+                                <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-center">
+                                    <div className="space-y-1">
+                                        <Label htmlFor={`faq-question-${faq.id}`}>Question</Label>
+                                        <Input
+                                            id={`faq-question-${faq.id}`}
+                                            value={faq.question}
+                                            onChange={(e) => handleFaqChange(faq.id, 'question', e.target.value)}
+                                            placeholder="e.g., What is your return policy?"
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <Label htmlFor={`faq-answer-${faq.id}`}>Answer</Label>
+                                        <Input
+                                            id={`faq-answer-${faq.id}`}
+                                            value={faq.answer}
+                                            onChange={(e) => handleFaqChange(faq.id, 'answer', e.target.value)}
+                                            placeholder="e.g., We accept returns within 30 days."
+                                        />
+                                    </div>
+                                     <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => removeFaq(faq.id)}
+                                        className="self-end"
+                                        aria-label="Remove FAQ"
+                                    >
+                                        <Trash2 className="h-5 w-5 text-red-500" />
+                                    </Button>
+                                </div>
+                            </div>
+                        ))}
+                         <Button onClick={addFaq} variant="outline" className="w-full">
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            Add FAQ
+                        </Button>
                     </CardContent>
+                    <CardFooter>
+                        <Button disabled={isSaving || !user}>{isSaving ? 'Saving...' : 'Save FAQs'}</Button>
+                    </CardFooter>
                  </Card>
             </TabsContent>
             <TabsContent value="brand-voice">
