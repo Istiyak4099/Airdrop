@@ -22,7 +22,7 @@ import { saveBusinessProfile, getBusinessProfile, BusinessProfile } from '@/serv
 import { useAuth } from '@/hooks/use-auth';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
+import { ThreeStateSwitch } from '@/components/ui/three-state-switch';
 
 
 interface Message {
@@ -44,11 +44,13 @@ interface FAQ {
   answer: string;
 }
 
+type BrandVoiceState = 'left' | 'neutral' | 'right';
+
 interface BrandVoice {
-    professionalism: boolean;
-    verbosity: boolean;
-    formality: boolean;
-    humor: boolean;
+    professionalism: BrandVoiceState;
+    verbosity: BrandVoiceState;
+    formality: BrandVoiceState;
+    humor: BrandVoiceState;
 }
 
 
@@ -177,10 +179,10 @@ export default function ConfigureAiPage() {
         { id: Date.now(), question: '', answer: '' },
     ]);
     const [brandVoice, setBrandVoice] = useState<BrandVoice>({
-        professionalism: false,
-        verbosity: false,
-        formality: false,
-        humor: false,
+        professionalism: 'neutral',
+        verbosity: 'neutral',
+        formality: 'neutral',
+        humor: 'neutral',
     });
     const [writingStyleExample, setWritingStyleExample] = useState('');
 
@@ -250,7 +252,7 @@ export default function ConfigureAiPage() {
         setFaqs(prev => prev.map(faq => faq.id === id ? { ...faq, [field]: value } : faq));
     };
     
-    const handleBrandVoiceChange = (field: keyof BrandVoice, value: boolean) => {
+    const handleBrandVoiceChange = (field: keyof BrandVoice, value: BrandVoiceState) => {
         setBrandVoice(prev => ({ ...prev, [field]: value }));
     };
 
@@ -496,40 +498,40 @@ export default function ConfigureAiPage() {
                             <Label className="mb-4 block">Tone of Voice</Label>
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between rounded-lg border p-3">
-                                    <Label htmlFor="professionalism-switch" className={brandVoice.professionalism ? 'text-muted-foreground' : ''}>Professional</Label>
-                                    <Switch 
-                                        id="professionalism-switch" 
-                                        checked={brandVoice.professionalism}
-                                        onCheckedChange={(value) => handleBrandVoiceChange('professionalism', value)}
+                                    <Label htmlFor="professionalism-switch">Professional</Label>
+                                    <ThreeStateSwitch
+                                        id="professionalism-switch"
+                                        value={brandVoice.professionalism}
+                                        onValueChange={(value) => handleBrandVoiceChange('professionalism', value)}
                                     />
-                                    <Label htmlFor="professionalism-switch" className={!brandVoice.professionalism ? 'text-muted-foreground' : ''}>Casual</Label>
+                                    <Label htmlFor="professionalism-switch">Casual</Label>
                                 </div>
                                 <div className="flex items-center justify-between rounded-lg border p-3">
-                                    <Label htmlFor="verbosity-switch" className={brandVoice.verbosity ? 'text-muted-foreground' : ''}>Detailed</Label>
-                                    <Switch 
+                                    <Label htmlFor="verbosity-switch">Detailed</Label>
+                                    <ThreeStateSwitch
                                         id="verbosity-switch"
-                                        checked={brandVoice.verbosity}
-                                        onCheckedChange={(value) => handleBrandVoiceChange('verbosity', value)}
+                                        value={brandVoice.verbosity}
+                                        onValueChange={(value) => handleBrandVoiceChange('verbosity', value)}
                                     />
-                                    <Label htmlFor="verbosity-switch" className={!brandVoice.verbosity ? 'text-muted-foreground' : ''}>Concise</Label>
+                                    <Label htmlFor="verbosity-switch">Concise</Label>
                                 </div>
                                 <div className="flex items-center justify-between rounded-lg border p-3">
-                                    <Label htmlFor="formality-switch" className={brandVoice.formality ? 'text-muted-foreground' : ''}>Formal</Label>
-                                    <Switch 
+                                    <Label htmlFor="formality-switch">Formal</Label>
+                                     <ThreeStateSwitch
                                         id="formality-switch"
-                                        checked={brandVoice.formality}
-                                        onCheckedChange={(value) => handleBrandVoiceChange('formality', value)}
+                                        value={brandVoice.formality}
+                                        onValueChange={(value) => handleBrandVoiceChange('formality', value)}
                                     />
-                                    <Label htmlFor="formality-switch" className={!brandVoice.formality ? 'text-muted-foreground' : ''}>Friendly</Label>
+                                    <Label htmlFor="formality-switch">Friendly</Label>
                                 </div>
                                 <div className="flex items-center justify-between rounded-lg border p-3">
-                                    <Label htmlFor="humor-switch" className={brandVoice.humor ? 'text-muted-foreground' : ''}>Serious</Label>
-                                    <Switch 
+                                    <Label htmlFor="humor-switch">Serious</Label>
+                                     <ThreeStateSwitch
                                         id="humor-switch"
-                                        checked={brandVoice.humor}
-                                        onCheckedChange={(value) => handleBrandVoiceChange('humor', value)}
+                                        value={brandVoice.humor}
+                                        onValueChange={(value) => handleBrandVoiceChange('humor', value)}
                                     />
-                                    <Label htmlFor="humor-switch" className={!brandVoice.humor ? 'text-muted-foreground' : ''}>Humorous</Label>
+                                    <Label htmlFor="humor-switch">Humorous</Label>
                                 </div>
                             </div>
                         </div>
