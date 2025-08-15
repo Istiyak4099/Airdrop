@@ -13,12 +13,6 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { Building, Mic, List, Settings2, Bot, Send, ChevronDown, ChevronUp, Package, HelpCircle } from "lucide-react"
 import { Skeleton } from '@/components/ui/skeleton';
@@ -143,10 +137,21 @@ function AvatarFallback({ children }: { children: React.ReactNode }) {
     return <span className="text-sm font-semibold">{children}</span>
 }
 
+const NavLink = ({ active, onClick, children, icon: Icon }: { active: boolean, onClick: () => void, children: React.ReactNode, icon: React.ElementType }) => (
+    <button
+        onClick={onClick}
+        className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${active ? 'bg-muted text-primary' : ''}`}
+    >
+        <Icon className="h-5 w-5" />
+        {children}
+    </button>
+);
+
 
 export default function ConfigureAiPage() {
     const { toast } = useToast();
     const { user, loading } = useAuth();
+    const [activeTab, setActiveTab] = useState('business-basics');
     const [companyName, setCompanyName] = useState('');
     const [industry, setIndustry] = useState('');
     const [description, setDescription] = useState('');
@@ -224,127 +229,131 @@ export default function ConfigureAiPage() {
                 Customize how your AI responds to customers across all platforms.
             </p>
         </div>
-        <Tabs defaultValue="business-basics" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-6 h-auto">
-                <TabsTrigger value="business-basics" className="flex items-center gap-2">
-                    <Building className="h-4 w-4" /> Business Basics
-                </TabsTrigger>
-                <TabsTrigger value="products-services" className="flex items-center gap-2">
-                    <Package className="h-4 w-4" /> Products & Services
-                </TabsTrigger>
-                <TabsTrigger value="faqs" className="flex items-center gap-2">
-                    <HelpCircle className="h-4 w-4" /> FAQs
-                </TabsTrigger>
-                <TabsTrigger value="brand-voice" className="flex items-center gap-2">
-                    <Mic className="h-4 w-4" /> Brand Voice
-                </TabsTrigger>
-                <TabsTrigger value="response-guidelines" className="flex items-center gap-2">
-                    <List className="h-4 w-4" /> Response Guidelines
-                </TabsTrigger>
-                <TabsTrigger value="advanced-settings" className="flex items-center gap-2">
-                    <Settings2 className="h-4 w-4" /> Advanced Settings
-                </TabsTrigger>
-            </TabsList>
-            <TabsContent value="business-basics">
-                <Card>
-                <CardHeader>
-                    <CardTitle>Business Basics</CardTitle>
-                    <CardDescription>
-                    Let's start with some basic information about your business.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="company-name">Company Name</Label>
-                        <Input 
-                            id="company-name" 
-                            placeholder="e.g., Airdrop Inc." 
-                            value={companyName}
-                            onChange={(e) => setCompanyName(e.target.value)}
-                        />
-                    </div>
-                     <div className="space-y-2">
-                        <Label htmlFor="industry">Industry</Label>
-                        <Input 
-                            id="industry" 
-                            placeholder="e.g., E-commerce, Technology" 
-                            value={industry}
-                            onChange={(e) => setIndustry(e.target.value)}
-                        />
-                    </div>
-                     <div className="space-y-2">
-                        <Label htmlFor="description">Company Description</Label>
-                        <Textarea 
-                            id="description" 
-                            placeholder="Describe what your company does, its mission, and values."
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            rows={5}
-                        />
-                    </div>
-                </CardContent>
-                <CardFooter>
-                    <Button onClick={handleSaveChanges} disabled={isSaving || !user}>{isSaving ? 'Saving...' : 'Save Changes'}</Button>
-                </CardFooter>
-                </Card>
-            </TabsContent>
-             <TabsContent value="products-services">
-                 <Card>
-                    <CardHeader>
-                        <CardTitle>Products & Services</CardTitle>
-                        <CardDescription>Add details about the products and services you offer.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <p>Configure your products and services here.</p>
-                    </CardContent>
-                 </Card>
-            </TabsContent>
-            <TabsContent value="faqs">
-                 <Card>
-                    <CardHeader>
-                        <CardTitle>FAQs</CardTitle>
-                        <CardDescription>Add frequently asked questions and their answers.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <p>Configure your FAQs here.</p>
-                    </CardContent>
-                 </Card>
-            </TabsContent>
-            <TabsContent value="brand-voice">
-                 <Card>
-                    <CardHeader>
-                        <CardTitle>Brand Voice</CardTitle>
-                        <CardDescription>Define the personality of your AI assistant.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <p>Configure your AI's brand voice here.</p>
-                    </CardContent>
-                 </Card>
-            </TabsContent>
-            <TabsContent value="response-guidelines">
-                 <Card>
-                    <CardHeader>
-                        <CardTitle>Response Guidelines</CardTitle>
-                        <CardDescription>Set rules and guidelines for how the AI should respond.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <p>Set up response guidelines here.</p>
-                    </CardContent>
-                 </Card>
-            </TabsContent>
-            <TabsContent value="advanced-settings">
-                 <Card>
-                    <CardHeader>
-                        <CardTitle>Advanced Settings</CardTitle>
-                        <CardDescription>Fine-tune advanced AI parameters.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                       <p>Configure advanced settings here.</p>
-                    </CardContent>
-                 </Card>
-            </TabsContent>
-        </Tabs>
+        <div className="grid grid-cols-1 md:grid-cols-[180px_1fr] lg:grid-cols-[250px_1fr] gap-6">
+            <nav className="grid gap-2 text-sm font-medium">
+                <NavLink active={activeTab === 'business-basics'} onClick={() => setActiveTab('business-basics')} icon={Building}>
+                    Business Basics
+                </NavLink>
+                 <NavLink active={activeTab === 'products-services'} onClick={() => setActiveTab('products-services')} icon={Package}>
+                    Products & Services
+                </NavLink>
+                <NavLink active={activeTab === 'faqs'} onClick={() => setActiveTab('faqs')} icon={HelpCircle}>
+                    FAQs
+                </NavLink>
+                <NavLink active={activeTab === 'brand-voice'} onClick={() => setActiveTab('brand-voice')} icon={Mic}>
+                   Brand Voice
+                </NavLink>
+                <NavLink active={activeTab === 'response-guidelines'} onClick={() => setActiveTab('response-guidelines')} icon={List}>
+                   Response Guidelines
+                </NavLink>
+                <NavLink active={activeTab === 'advanced-settings'} onClick={() => setActiveTab('advanced-settings')} icon={Settings2}>
+                   Advanced Settings
+                </NavLink>
+            </nav>
+            <div className="grid gap-6">
+                {activeTab === 'business-basics' && (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Business Basics</CardTitle>
+                            <CardDescription>
+                            Let's start with some basic information about your business.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="company-name">Company Name</Label>
+                                <Input 
+                                    id="company-name" 
+                                    placeholder="e.g., Airdrop Inc." 
+                                    value={companyName}
+                                    onChange={(e) => setCompanyName(e.target.value)}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="industry">Industry</Label>
+                                <Input 
+                                    id="industry" 
+                                    placeholder="e.g., E-commerce, Technology" 
+                                    value={industry}
+                                    onChange={(e) => setIndustry(e.target.value)}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="description">Company Description</Label>
+                                <Textarea 
+                                    id="description" 
+                                    placeholder="Describe what your company does, its mission, and values."
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                    rows={5}
+                                />
+                            </div>
+                        </CardContent>
+                        <CardFooter>
+                            <Button onClick={handleSaveChanges} disabled={isSaving || !user}>{isSaving ? 'Saving...' : 'Save Changes'}</Button>
+                        </CardFooter>
+                    </Card>
+                )}
+                 {activeTab === 'products-services' && (
+                     <Card>
+                        <CardHeader>
+                            <CardTitle>Products & Services</CardTitle>
+                            <CardDescription>Add details about the products and services you offer.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <p>Configure your products and services here.</p>
+                        </CardContent>
+                     </Card>
+                )}
+                {activeTab === 'faqs' && (
+                     <Card>
+                        <CardHeader>
+                            <CardTitle>FAQs</CardTitle>
+                            <CardDescription>Add frequently asked questions and their answers.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <p>Configure your FAQs here.</p>
+                        </CardContent>
+                     </Card>
+                )}
+                {activeTab === 'brand-voice' && (
+                     <Card>
+                        <CardHeader>
+                            <CardTitle>Brand Voice</CardTitle>
+                            <CardDescription>Define the personality of your AI assistant.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <p>Configure your AI's brand voice here.</p>
+                        </CardContent>
+                     </Card>
+                )}
+                {activeTab === 'response-guidelines' && (
+                     <Card>
+                        <CardHeader>
+                            <CardTitle>Response Guidelines</CardTitle>
+                            <CardDescription>Set rules and guidelines for how the AI should respond.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <p>Set up response guidelines here.</p>
+                        </CardContent>
+                     </Card>
+                )}
+                {activeTab === 'advanced-settings' && (
+                     <Card>
+                        <CardHeader>
+                            <CardTitle>Advanced Settings</CardTitle>
+                            <CardDescription>Fine-tune advanced AI parameters.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                           <p>Configure advanced settings here.</p>
+                        </CardContent>
+                     </Card>
+                )}
+            </div>
+        </div>
         <AiResponsePreview />
     </div>
   )
 }
+
+    
