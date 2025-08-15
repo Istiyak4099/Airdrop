@@ -223,27 +223,27 @@ export default function ConfigureAiPage() {
         </div>
         <Tabs defaultValue="business-basics" className="space-y-4">
             <TabsList className="flex-col md:flex-row h-auto md:h-10">
-                <TabsTrigger value="business-basics">
+                <TabsTrigger value="business-basics" className="w-full justify-start md:justify-center">
                     <Building className="mr-2 h-5 w-5 text-blue-500" />
                     Business Basics
                 </TabsTrigger>
-                <TabsTrigger value="products-services">
+                <TabsTrigger value="products-services" className="w-full justify-start md:justify-center">
                     <Package className="mr-2 h-5 w-5 text-orange-500" />
                     Products & Services
                 </TabsTrigger>
-                <TabsTrigger value="faqs">
+                <TabsTrigger value="faqs" className="w-full justify-start md:justify-center">
                     <HelpCircle className="mr-2 h-5 w-5 text-green-500" />
                     FAQs
                 </TabsTrigger>
-                <TabsTrigger value="brand-voice">
+                <TabsTrigger value="brand-voice" className="w-full justify-start md:justify-center">
                     <Mic className="mr-2 h-5 w-5 text-purple-500" />
                     Brand Voice
                 </TabsTrigger>
-                <TabsTrigger value="response-guidelines">
+                <TabsTrigger value="response-guidelines" className="w-full justify-start md:justify-center">
                     <List className="mr-2 h-5 w-5 text-red-500" />
                     Response Guidelines
                 </TabsTrigger>
-                <TabsTrigger value="advanced-settings">
+                <TabsTrigger value="advanced-settings" className="w-full justify-start md:justify-center">
                      <Settings2 className="mr-2 h-5 w-5 text-gray-500" />
                     Advanced Settings
                 </TabsTrigger>
@@ -362,8 +362,3 @@ export default function ConfigureAiPage() {
     </div>
   )
 }
-
-
-    
-
-    
