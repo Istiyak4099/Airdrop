@@ -182,6 +182,7 @@ export default function ConfigureAiPage() {
         formality: [50],
         humor: [50],
     });
+    const [writingStyleExample, setWritingStyleExample] = useState('');
 
 
     useEffect(() => {
@@ -516,6 +517,19 @@ export default function ConfigureAiPage() {
                                 </div>
                             </div>
                         </div>
+                         <div className="space-y-2">
+                            <Label htmlFor="writing-style">Writing Style Examples</Label>
+                            <Textarea
+                                id="writing-style"
+                                placeholder="Provide examples of how you would like the AI to write, e.g., 'Use short, clear sentences. Always thank the customer for their question.'"
+                                value={writingStyleExample}
+                                onChange={(e) => setWritingStyleExample(e.target.value)}
+                                rows={4}
+                            />
+                            <p className="text-xs text-muted-foreground">
+                                Examples of your preferred communication style help the AI better match your brand voice.
+                            </p>
+                        </div>
                     </CardContent>
                     <CardFooter>
                         <Button disabled={isSaving || !user}>{isSaving ? 'Saving...' : 'Save Brand Voice'}</Button>
@@ -551,4 +565,6 @@ export default function ConfigureAiPage() {
 }
 
     
+    
+
     
