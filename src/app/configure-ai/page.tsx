@@ -22,6 +22,7 @@ import { saveBusinessProfile, getBusinessProfile, BusinessProfile } from '@/serv
 import { useAuth } from '@/hooks/use-auth';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Slider } from '@/components/ui/slider';
 
 
 interface Message {
@@ -41,6 +42,13 @@ interface FAQ {
   id: number;
   question: string;
   answer: string;
+}
+
+interface BrandVoice {
+    professionalism: number[];
+    verbosity: number[];
+    formality: number[];
+    humor: number[];
 }
 
 
@@ -168,6 +176,13 @@ export default function ConfigureAiPage() {
     const [faqs, setFaqs] = useState<FAQ[]>([
         { id: Date.now(), question: '', answer: '' },
     ]);
+    const [brandVoice, setBrandVoice] = useState<BrandVoice>({
+        professionalism: [50],
+        verbosity: [50],
+        formality: [50],
+        humor: [50],
+    });
+
 
     useEffect(() => {
         if (user) {
@@ -232,6 +247,10 @@ export default function ConfigureAiPage() {
 
     const handleFaqChange = (id: number, field: keyof Omit<FAQ, 'id'>, value: string) => {
         setFaqs(prev => prev.map(faq => faq.id === id ? { ...faq, [field]: value } : faq));
+    };
+    
+    const handleBrandVoiceChange = (field: keyof BrandVoice, value: number[]) => {
+        setBrandVoice(prev => ({ ...prev, [field]: value }));
     };
 
 
@@ -469,11 +488,38 @@ export default function ConfigureAiPage() {
                  <Card>
                     <CardHeader>
                         <CardTitle>Brand Voice</CardTitle>
-                        <CardDescription>Define the personality of your AI assistant.</CardDescription>
+                        <CardDescription>Define how your AI should sound and communicate with customers.</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <p>Configure your AI's brand voice here.</p>
+                    <CardContent className="space-y-8 pt-4">
+                        <div>
+                            <Label className="mb-4 block">Tone of Voice</Label>
+                            <div className="space-y-6">
+                                <div className="grid grid-cols-[100px_1fr_100px] items-center gap-4">
+                                    <span className="text-sm text-muted-foreground text-right">Professional</span>
+                                    <Slider value={brandVoice.professionalism} onValueChange={(value) => handleBrandVoiceChange('professionalism', value)} />
+                                    <span className="text-sm text-muted-foreground">Casual</span>
+                                </div>
+                                <div className="grid grid-cols-[100px_1fr_100px] items-center gap-4">
+                                    <span className="text-sm text-muted-foreground text-right">Detailed</span>
+                                    <Slider value={brandVoice.verbosity} onValueChange={(value) => handleBrandVoiceChange('verbosity', value)} />
+                                    <span className="text-sm text-muted-foreground">Concise</span>
+                                </div>
+                                <div className="grid grid-cols-[100px_1fr_100px] items-center gap-4">
+                                    <span className="text-sm text-muted-foreground text-right">Formal</span>
+                                    <Slider value={brandVoice.formality} onValueChange={(value) => handleBrandVoiceChange('formality', value)} />
+                                    <span className="text-sm text-muted-foreground">Friendly</span>
+                                </div>
+                                <div className="grid grid-cols-[100px_1fr_100px] items-center gap-4">
+                                    <span className="text-sm text-muted-foreground text-right">Serious</span>
+                                    <Slider value={brandVoice.humor} onValue-change={(value) => handleBrandVoiceChange('humor', value)} />
+                                    <span className="text-sm text-muted-foreground">Humorous</span>
+                                </div>
+                            </div>
+                        </div>
                     </CardContent>
+                    <CardFooter>
+                        <Button disabled={isSaving || !user}>{isSaving ? 'Saving...' : 'Save Brand Voice'}</Button>
+                    </CardFooter>
                  </Card>
             </TabsContent>
             <TabsContent value="response-guidelines">
@@ -503,3 +549,5 @@ export default function ConfigureAiPage() {
     </div>
   )
 }
+
+    
