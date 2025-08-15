@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Building, Mic, List, Settings2, Bot, Send, ChevronDown, ChevronUp, Package, HelpCircle } from "lucide-react"
+import { Building, Mic, List, Settings2, Bot, Send, ChevronDown, ChevronUp, Package, HelpCircle, PlusCircle, Trash2 } from "lucide-react"
 import { Skeleton } from '@/components/ui/skeleton';
 import { generateWelcomeMessage } from '@/ai/flows/generate-welcome-message';
 import { useToast } from '@/hooks/use-toast';
@@ -28,6 +28,13 @@ interface Message {
   id: number;
   sender: 'user' | 'ai';
   content: string | React.ReactNode;
+}
+
+interface Product {
+  id: number;
+  name: string;
+  price: string;
+  description: string;
 }
 
 function AiResponsePreview() {
@@ -148,6 +155,9 @@ export default function ConfigureAiPage() {
     const [industry, setIndustry] = useState('');
     const [description, setDescription] = useState('');
     const [isSaving, setIsSaving] = useState(false);
+    const [products, setProducts] = useState<Product[]>([
+        { id: Date.now(), name: '', price: '', description: '' },
+    ]);
 
     useEffect(() => {
         if (user) {
@@ -189,6 +199,19 @@ export default function ConfigureAiPage() {
             setIsSaving(false);
         }
     };
+
+    const addProduct = () => {
+        setProducts(prev => [...prev, { id: Date.now(), name: '', price: '', description: '' }]);
+    };
+
+    const removeProduct = (id: number) => {
+        setProducts(prev => prev.filter(p => p.id !== id));
+    };
+
+    const handleProductChange = (id: number, field: keyof Omit<Product, 'id'>, value: string) => {
+        setProducts(prev => prev.map(p => p.id === id ? { ...p, [field]: value } : p));
+    };
+
 
     if (loading) {
         return (
@@ -282,6 +305,13 @@ export default function ConfigureAiPage() {
                                     <SelectItem value="hospitality">Hospitality</SelectItem>
                                     <SelectItem value="retail">Retail</SelectItem>
                                     <SelectItem value="real-estate">Real Estate</SelectItem>
+                                    <SelectItem value="automotive">Automotive</SelectItem>
+                                    <SelectItem value="consulting">Consulting</SelectItem>
+                                    <SelectItem value="construction">Construction</SelectItem>
+                                    <SelectItem value="entertainment">Entertainment</SelectItem>
+                                    <SelectItem value="food-beverage">Food & Beverage</SelectItem>
+                                    <SelectItem value="manufacturing">Manufacturing</SelectItem>
+                                    <SelectItem value="non-profit">Non-Profit</SelectItem>
                                     <SelectItem value="other">Other</SelectItem>
                                 </SelectContent>
                             </Select>
@@ -303,15 +333,65 @@ export default function ConfigureAiPage() {
                 </Card>
             </TabsContent>
             <TabsContent value="products-services">
-                 <Card>
+                <Card>
                     <CardHeader>
                         <CardTitle>Products & Services</CardTitle>
-                        <CardDescription>Add details about the products and services you offer.</CardDescription>
+                        <CardDescription>
+                            Add details about the products and services you offer. This will help the AI provide more accurate responses.
+                        </CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <p>Configure your products and services here.</p>
+                    <CardContent className="space-y-4">
+                        {products.map((product, index) => (
+                            <div key={product.id} className="p-4 border rounded-lg space-y-3">
+                                <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_2fr_auto] gap-4 items-center">
+                                    <div className="space-y-1">
+                                        <Label htmlFor={`product-name-${product.id}`}>Product Name</Label>
+                                        <Input
+                                            id={`product-name-${product.id}`}
+                                            value={product.name}
+                                            onChange={(e) => handleProductChange(product.id, 'name', e.target.value)}
+                                            placeholder="e.g., AI Assistant Pro"
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <Label htmlFor={`price-${product.id}`}>Price</Label>
+                                        <Input
+                                            id={`price-${product.id}`}
+                                            value={product.price}
+                                            onChange={(e) => handleProductChange(product.id, 'price', e.target.value)}
+                                            placeholder="e.g., $99/mo"
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <Label htmlFor={`product-desc-${product.id}`}>Brief Description</Label>
+                                        <Input
+                                            id={`product-desc-${product.id}`}
+                                            value={product.description}
+                                            onChange={(e) => handleProductChange(product.id, 'description', e.target.value)}
+                                            placeholder="e.g., Advanced AI features"
+                                        />
+                                    </div>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => removeProduct(product.id)}
+                                        className="self-end"
+                                        aria-label="Remove product"
+                                    >
+                                        <Trash2 className="h-5 w-5 text-red-500" />
+                                    </Button>
+                                </div>
+                            </div>
+                        ))}
+                        <Button onClick={addProduct} variant="outline" className="w-full">
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            Add Product/Service
+                        </Button>
                     </CardContent>
-                 </Card>
+                    <CardFooter>
+                        <Button disabled={isSaving || !user}>{isSaving ? 'Saving...' : 'Save Products'}</Button>
+                    </CardFooter>
+                </Card>
             </TabsContent>
             <TabsContent value="faqs">
                  <Card>
