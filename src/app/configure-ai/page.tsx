@@ -498,40 +498,40 @@ export default function ConfigureAiPage() {
                             <Label className="mb-4 block">Tone of Voice</Label>
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between rounded-lg border p-3">
-                                    <Label htmlFor="professionalism-switch">Professional</Label>
+                                    <Label>Professional</Label>
                                     <ThreeStateSwitch
                                         id="professionalism-switch"
                                         value={brandVoice.professionalism}
                                         onValueChange={(value) => handleBrandVoiceChange('professionalism', value)}
                                     />
-                                    <Label htmlFor="professionalism-switch">Casual</Label>
+                                    <Label>Casual</Label>
                                 </div>
                                 <div className="flex items-center justify-between rounded-lg border p-3">
-                                    <Label htmlFor="verbosity-switch">Detailed</Label>
+                                    <Label>Detailed</Label>
                                     <ThreeStateSwitch
                                         id="verbosity-switch"
                                         value={brandVoice.verbosity}
                                         onValueChange={(value) => handleBrandVoiceChange('verbosity', value)}
                                     />
-                                    <Label htmlFor="verbosity-switch">Concise</Label>
+                                    <Label>Concise</Label>
                                 </div>
                                 <div className="flex items-center justify-between rounded-lg border p-3">
-                                    <Label htmlFor="formality-switch">Formal</Label>
+                                    <Label>Formal</Label>
                                      <ThreeStateSwitch
                                         id="formality-switch"
                                         value={brandVoice.formality}
                                         onValueChange={(value) => handleBrandVoiceChange('formality', value)}
                                     />
-                                    <Label htmlFor="formality-switch">Friendly</Label>
+                                    <Label>Friendly</Label>
                                 </div>
                                 <div className="flex items-center justify-between rounded-lg border p-3">
-                                    <Label htmlFor="humor-switch">Serious</Label>
+                                    <Label>Serious</Label>
                                      <ThreeStateSwitch
                                         id="humor-switch"
                                         value={brandVoice.humor}
                                         onValueChange={(value) => handleBrandVoiceChange('humor', value)}
                                     />
-                                    <Label htmlFor="humor-switch">Humorous</Label>
+                                    <Label>Humorous</Label>
                                 </div>
                             </div>
                         </div>
