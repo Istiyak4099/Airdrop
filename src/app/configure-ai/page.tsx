@@ -222,7 +222,7 @@ export default function ConfigureAiPage() {
             </p>
         </div>
         <Tabs defaultValue="business-basics" className="space-y-4">
-            <TabsList>
+            <TabsList className="flex-col md:flex-row h-auto md:h-10">
                 <TabsTrigger value="business-basics">
                     <Building className="mr-2 h-5 w-5 text-blue-500" />
                     Business Basics
@@ -363,5 +363,7 @@ export default function ConfigureAiPage() {
   )
 }
 
+
+    
 
     
