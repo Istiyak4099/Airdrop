@@ -183,6 +183,8 @@ export default function ConfigureAiPage() {
         formality: 'neutral',
     });
     const [writingStyleExample, setWritingStyleExample] = useState('');
+    const [languageHandling, setLanguageHandling] = useState('auto-detect');
+    const [preferredResponseLength, setPreferredResponseLength] = useState('short');
 
 
     useEffect(() => {
@@ -203,6 +205,12 @@ export default function ConfigureAiPage() {
                     }
                     if (profile.writingStyleExample) {
                         setWritingStyleExample(profile.writingStyleExample);
+                    }
+                    if(profile.languageHandling) {
+                        setLanguageHandling(profile.languageHandling);
+                    }
+                    if(profile.preferredResponseLength) {
+                        setPreferredResponseLength(profile.preferredResponseLength);
                     }
                 }
             });
@@ -587,15 +595,47 @@ export default function ConfigureAiPage() {
                  </Card>
             </TabsContent>
             <TabsContent value="response-guidelines">
-                 <Card>
+                <Card>
                     <CardHeader>
                         <CardTitle>Response Guidelines</CardTitle>
                         <CardDescription>Set rules and guidelines for how the AI should respond.</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <p>Set up response guidelines here.</p>
+                    <CardContent className="space-y-4">
+                         <div className="space-y-2">
+                            <Label htmlFor="language-handling">Language Handling</Label>
+                            <Select value={languageHandling} onValueChange={setLanguageHandling}>
+                                <SelectTrigger id="language-handling">
+                                    <SelectValue placeholder="Select language handling" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="auto-detect">Auto-detect and match customer's language</SelectItem>
+                                    <SelectItem value="english-only">English only</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                         <div className="space-y-2">
+                            <Label htmlFor="response-length">Preferred Response Length</Label>
+                            <Select value={preferredResponseLength} onValueChange={setPreferredResponseLength}>
+                                <SelectTrigger id="response-length">
+                                    <SelectValue placeholder="Select response length" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="short">Short (1-2 sentences)</SelectItem>
+                                    <SelectItem value="medium">Medium (2-4 sentences)</SelectItem>
+                                    <SelectItem value="long">Long (4+ sentences with details)</SelectItem>
+                                    <SelectItem value="adaptive">Adaptive (matches customer's style)</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
                     </CardContent>
-                 </Card>
+                    <CardFooter>
+                        <Button 
+                            onClick={() => handleSave({ languageHandling, preferredResponseLength }, "Your response guidelines have been saved.")}
+                            disabled={isSaving || !user}>
+                            {isSaving ? 'Saving...' : 'Save Guidelines'}
+                        </Button>
+                    </CardFooter>
+                </Card>
             </TabsContent>
             <TabsContent value="advanced-settings">
                  <Card>
