@@ -27,11 +27,11 @@ export function ThreeStateSwitch({ id, value, onValueChange, className }: ThreeS
   const getThumbPosition = () => {
     switch (value) {
       case 'left':
-        return 'translate-x-0.5';
+        return 'translate-x-[0.25rem]';
       case 'neutral':
-        return 'translate-x-[calc(50%+0.125rem)]';
+        return 'translate-x-[1.25rem]';
       case 'right':
-        return 'translate-x-[calc(100%-0.125rem)]';
+        return 'translate-x-[2.25rem]';
     }
   };
   
