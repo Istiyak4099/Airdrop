@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Building, Mic, List, Settings2, Bot, Send, ChevronDown, ChevronUp, Package, HelpCircle, PlusCircle, Trash2 } from "lucide-react"
+import { Building, Mic, List, Settings2, Bot, Send, ChevronDown, ChevronUp, Package, HelpCircle, PlusCircle, Trash2, RotateCcw } from "lucide-react"
 import { Skeleton } from '@/components/ui/skeleton';
 import { generateWelcomeMessage } from '@/ai/flows/generate-welcome-message';
 import { useToast } from '@/hooks/use-toast';
@@ -50,7 +50,6 @@ interface BrandVoice {
     professionalism: BrandVoiceState;
     verbosity: BrandVoiceState;
     formality: BrandVoiceState;
-    humor: BrandVoiceState;
 }
 
 
@@ -182,7 +181,6 @@ export default function ConfigureAiPage() {
         professionalism: 'neutral',
         verbosity: 'neutral',
         formality: 'neutral',
-        humor: 'neutral',
     });
     const [writingStyleExample, setWritingStyleExample] = useState('');
 
@@ -254,6 +252,14 @@ export default function ConfigureAiPage() {
     
     const handleBrandVoiceChange = (field: keyof BrandVoice, value: BrandVoiceState) => {
         setBrandVoice(prev => ({ ...prev, [field]: value }));
+    };
+    
+    const handleResetBrandVoice = () => {
+        setBrandVoice({
+            professionalism: 'neutral',
+            verbosity: 'neutral',
+            formality: 'neutral',
+        });
     };
 
 
@@ -495,43 +501,40 @@ export default function ConfigureAiPage() {
                     </CardHeader>
                     <CardContent className="space-y-8 pt-4">
                         <div>
-                            <Label className="mb-4 block">Tone of Voice</Label>
+                            <div className="flex items-center justify-between mb-4">
+                                <Label>Tone of Voice</Label>
+                                <Button variant="ghost" size="sm" onClick={handleResetBrandVoice}>
+                                    <RotateCcw className="mr-2 h-4 w-4" />
+                                    Reset
+                                </Button>
+                            </div>
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between rounded-lg border p-3">
-                                    <Label>Professional</Label>
+                                    <Label className="w-1/3 text-left">Professional</Label>
                                     <ThreeStateSwitch
                                         id="professionalism-switch"
                                         value={brandVoice.professionalism}
                                         onValueChange={(value) => handleBrandVoiceChange('professionalism', value)}
                                     />
-                                    <Label>Casual</Label>
+                                    <Label className="w-1/3 text-right">Casual</Label>
                                 </div>
                                 <div className="flex items-center justify-between rounded-lg border p-3">
-                                    <Label>Detailed</Label>
+                                    <Label className="w-1/3 text-left">Detailed</Label>
                                     <ThreeStateSwitch
                                         id="verbosity-switch"
                                         value={brandVoice.verbosity}
                                         onValueChange={(value) => handleBrandVoiceChange('verbosity', value)}
                                     />
-                                    <Label>Concise</Label>
+                                    <Label className="w-1/3 text-right">Concise</Label>
                                 </div>
                                 <div className="flex items-center justify-between rounded-lg border p-3">
-                                    <Label>Formal</Label>
+                                    <Label className="w-1/3 text-left">Formal</Label>
                                      <ThreeStateSwitch
                                         id="formality-switch"
                                         value={brandVoice.formality}
                                         onValueChange={(value) => handleBrandVoiceChange('formality', value)}
                                     />
-                                    <Label>Friendly</Label>
-                                </div>
-                                <div className="flex items-center justify-between rounded-lg border p-3">
-                                    <Label>Serious</Label>
-                                     <ThreeStateSwitch
-                                        id="humor-switch"
-                                        value={brandVoice.humor}
-                                        onValueChange={(value) => handleBrandVoiceChange('humor', value)}
-                                    />
-                                    <Label>Humorous</Label>
+                                    <Label className="w-1/3 text-right">Friendly</Label>
                                 </div>
                             </div>
                         </div>
