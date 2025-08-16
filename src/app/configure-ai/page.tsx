@@ -23,6 +23,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ThreeStateSwitch } from '@/components/ui/three-state-switch';
+import { Checkbox } from '@/components/ui/checkbox';
 
 
 interface Message {
@@ -186,6 +187,8 @@ export default function ConfigureAiPage() {
     const [languageHandling, setLanguageHandling] = useState('auto-detect');
     const [preferredResponseLength, setPreferredResponseLength] = useState('short');
     const [escalationProtocol, setEscalationProtocol] = useState('escalate');
+    const [followUpQuestions, setFollowUpQuestions] = useState(false);
+    const [proactiveSuggestions, setProactiveSuggestions] = useState(false);
 
 
     useEffect(() => {
@@ -215,6 +218,12 @@ export default function ConfigureAiPage() {
                     }
                     if (profile.escalationProtocol) {
                         setEscalationProtocol(profile.escalationProtocol);
+                    }
+                    if (profile.followUpQuestions) {
+                        setFollowUpQuestions(profile.followUpQuestions);
+                    }
+                    if (profile.proactiveSuggestions) {
+                        setProactiveSuggestions(profile.proactiveSuggestions);
                     }
                 }
             });
@@ -644,10 +653,36 @@ export default function ConfigureAiPage() {
                                 </SelectContent>
                             </Select>
                         </div>
+                         <div className="space-y-2">
+                            <Label>Follow-up Questions</Label>
+                            <div className="flex items-center space-x-2">
+                                <Checkbox
+                                    id="follow-up-questions"
+                                    checked={followUpQuestions}
+                                    onCheckedChange={(checked) => setFollowUpQuestions(Boolean(checked))}
+                                />
+                                <Label htmlFor="follow-up-questions" className="font-normal">
+                                    Have the AI ask follow-up questions to better understand customer needs
+                                </Label>
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Proactive Suggestions</Label>
+                            <div className="flex items-center space-x-2">
+                                <Checkbox
+                                    id="proactive-suggestions"
+                                    checked={proactiveSuggestions}
+                                    onCheckedChange={(checked) => setProactiveSuggestions(Boolean(checked))}
+                                />
+                                <Label htmlFor="proactive-suggestions" className="font-normal">
+                                    Suggest relevant products or services when appropriate
+                                </Label>
+                            </div>
+                        </div>
                     </CardContent>
                     <CardFooter>
                         <Button 
-                            onClick={() => handleSave({ languageHandling, preferredResponseLength, escalationProtocol }, "Your response guidelines have been saved.")}
+                            onClick={() => handleSave({ languageHandling, preferredResponseLength, escalationProtocol, followUpQuestions, proactiveSuggestions }, "Your response guidelines have been saved.")}
                             disabled={isSaving || !user}>
                             {isSaving ? 'Saving...' : 'Save Guidelines'}
                         </Button>
