@@ -443,7 +443,7 @@ export default function ConfigureAiPage() {
                                 onClick={() => handleSave({ companyName: businessName, industry, description }, "Your business basics have been updated.")} 
                                 disabled={isSaving || !user}
                                 className="bg-green-600 hover:bg-green-700">
-                                {isSaving ? 'Saving...' : 'Save Changes'}
+                                {isSaving ? 'Saving...' : 'Save Business Basics'}
                             </Button>
                              <Button onClick={() => handleNextTab('products-services')}>
                                 Next: Products & Services <ArrowRight className="ml-2 h-4 w-4" />
