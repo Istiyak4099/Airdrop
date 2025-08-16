@@ -29,9 +29,9 @@ export function ThreeStateSwitch({ id, value, onValueChange, className }: ThreeS
       case 'left':
         return 'translate-x-[0.25rem]';
       case 'neutral':
-        return 'translate-x-[1.25rem]';
-      case 'right':
         return 'translate-x-[2.25rem]';
+      case 'right':
+        return 'translate-x-[4.25rem]';
     }
   };
   
@@ -43,7 +43,7 @@ export function ThreeStateSwitch({ id, value, onValueChange, className }: ThreeS
       aria-checked={value !== 'neutral'}
       onClick={handleStateChange}
       className={cn(
-        "relative inline-flex h-8 w-20 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        "relative inline-flex h-8 w-[6rem] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         value !== 'neutral' ? "bg-primary" : "bg-input",
         className
       )}
