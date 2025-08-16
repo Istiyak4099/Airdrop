@@ -2,7 +2,7 @@
 "use server";
 
 import { db } from "@/lib/firebase";
-import { doc, getDoc, setDoc, collection, getDocs, writeBatch, query, where } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 // Interfaces for each data model
 export interface BusinessBasics {
@@ -114,21 +114,24 @@ export async function getAdvancedSettings(userId: string): Promise<AdvancedSetti
     return await getData<AdvancedSettings>('advancedSettings', userId);
 }
 
+
 export async function getBusinessProfile(userId: string): Promise<any | null> {
     const collections = ['businessBasics', 'products', 'faqs', 'brandVoice', 'responseGuidelines', 'advancedSettings'];
     const promises = collections.map(col => getData(col, userId));
-    const results = await Promise.all(promises);
+    const [businessBasics, products, faqs, brandVoice, responseGuidelines, advancedSettings] = await Promise.all(promises);
     
-    if (results.every(r => r === null)) {
+    const profile: any = {};
+
+    if (businessBasics) Object.assign(profile, businessBasics);
+    if (products) Object.assign(profile, products);
+    if (faqs) Object.assign(profile, faqs);
+    if (brandVoice) Object.assign(profile, brandVoice);
+    if (responseGuidelines) Object.assign(profile, responseGuidelines);
+    if (advancedSettings) Object.assign(profile, advancedSettings);
+
+    if (Object.keys(profile).length === 0) {
         return null;
     }
 
-    return {
-        ...(results[0] as BusinessBasics),
-        ...(results[1] as { products: Product[] }),
-        ...(results[2] as { faqs: FAQ[] }),
-        ...(results[3] as BrandVoiceSettings),
-        ...(results[4] as ResponseGuidelines),
-        ...(results[5] as AdvancedSettings),
-    };
+    return profile;
 }

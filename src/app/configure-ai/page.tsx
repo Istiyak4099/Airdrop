@@ -69,11 +69,17 @@ function AiResponsePreview() {
         setMessages(prev => [...prev, aiMessage]);
 
         try {
+            const chatHistory = messages.map(m => ({ 
+                sender: m.sender, 
+                content: typeof m.content === 'string' ? m.content : "..." 
+            }));
+
             const { welcomeMessage } = await generateWelcomeMessage({ 
                 customerName: 'Test User',
                 socialMediaPlatform: 'Preview Chat',
                 userMessage: currentInput,
-                userId: user.uid
+                userId: user.uid,
+                chatHistory: chatHistory
             });
 
             const finalAiMessage: Message = { id: Date.now() + 1, sender: 'ai', content: welcomeMessage };

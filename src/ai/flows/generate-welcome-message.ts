@@ -10,7 +10,7 @@
  */
 
 import {ai} from '@/ai/genkit';
-import { getBusinessBasics } from '@/services/business-profile-service';
+import { getBusinessProfile } from '@/services/business-profile-service';
 import {z} from 'genkit';
 
 const GenerateWelcomeMessageInputSchema = z.object({
@@ -18,6 +18,10 @@ const GenerateWelcomeMessageInputSchema = z.object({
   socialMediaPlatform: z.string().describe('The social media platform where the interaction is taking place (e.g., Facebook, Instagram).'),
   userMessage: z.string().describe('The user\'s message to the business.'),
   userId: z.string().describe("The user's unique ID."),
+  chatHistory: z.array(z.object({
+    sender: z.enum(['user', 'ai']),
+    content: z.string(),
+  })).optional().describe("The history of the conversation so far."),
 });
 export type GenerateWelcomeMessageInput = z.infer<typeof GenerateWelcomeMessageInputSchema>;
 
@@ -33,26 +37,66 @@ export async function generateWelcomeMessage(input: GenerateWelcomeMessageInput)
 const prompt = ai.definePrompt({
   name: 'generateWelcomeMessagePrompt',
   input: {schema: z.object({
-    customerName: z.string(),
-    businessName: z.string(),
-    socialMediaPlatform: z.string(),
-    userMessage: z.string(),
-    businessDescription: z.string().optional(),
+      customerName: z.string(),
+      socialMediaPlatform: z.string(),
+      userMessage: z.string(),
+      chatHistory: z.array(z.object({
+        sender: z.enum(['user', 'ai']),
+        content: z.string(),
+      })).optional(),
+      businessProfile: z.any()
   })},
   output: {schema: GenerateWelcomeMessageOutputSchema},
-  prompt: `You are an AI assistant for {{businessName}}. Your goal is to provide helpful and friendly responses to customer inquiries on social media. Your response should be based on the business description.
+  prompt: `You are an AI customer service assistant for {{businessProfile.companyName}}. Your goal is to provide helpful, friendly, and context-aware responses to customer inquiries on social media.
 
-  Here is some information about the business:
-  {{#if businessDescription}}
-  Business Description: {{{businessDescription}}}
-  {{else}}
-  No business description provided. You should state that you do not have enough information.
-  {{/if}}
+  You MUST use the information provided in the business profile below as your primary source of truth. Do not make up information. If the answer is not in the profile, state that you do not have the information and offer to connect the user with a human agent.
+
+  Business Profile:
+  - Description: {{businessProfile.description}}
+  - Industry: {{businessProfile.industry}}
   
-  A customer named {{customerName}} has sent the following message on {{socialMediaPlatform}}:
+  Products/Services:
+  {{#each businessProfile.products}}
+  - Name: {{this.name}}
+    Price: {{this.price}}
+    Description: {{this.description}}
+  {{/each}}
+
+  Frequently Asked Questions:
+  {{#each businessProfile.faqs}}
+  - Q: {{this.question}}
+    A: {{this.answer}}
+  {{/each}}
+
+  Brand Voice & Tone:
+  - Professionalism: {{businessProfile.brandVoice.professionalism}} (left=professional, right=casual)
+  - Verbosity: {{businessProfile.brandVoice.verbosity}} (left=detailed, right=concise)
+  - Formality: {{businessProfile.brandVoice.formality}} (left=formal, right=friendly)
+  - Writing Style Example: "{{businessProfile.writingStyleExample}}"
+
+  Response Guidelines:
+  - Language: {{businessProfile.languageHandling}}
+  - Length: {{businessProfile.preferredResponseLength}}
+  - Escalation: When you don't know an answer, follow this protocol: {{businessProfile.escalationProtocol}}.
+  - Ask follow-up questions: {{#if businessProfile.followUpQuestions}}Yes{{else}}No{{/if}}
+  - Suggest products: {{#if businessProfile.proactiveSuggestions}}Yes{{else}}No{{/if}}
+  - Additional Guidelines: "{{businessProfile.additionalResponseGuidelines}}"
+  
+  Advanced Info:
+  - Policies: "{{businessProfile.companyPolicies}}"
+  - Sensitive Topics: "{{businessProfile.sensitiveTopicsHandling}}"
+  - Compliance: "{{businessProfile.complianceRequirements}}"
+  - Additional Knowledge: "{{businessProfile.additionalKnowledge}}"
+  
+  Conversation History:
+  {{#each chatHistory}}
+  - {{this.sender}}: {{this.content}}
+  {{/each}}
+
+  A customer named {{customerName}} has sent the following new message on {{socialMediaPlatform}}:
   "{{{userMessage}}}"
 
-  Based on the business information and the customer's message, craft a helpful and welcoming response. Do not say things like "This is a test response".
+  Based on the business profile and the conversation history, craft a helpful response to the user's LATEST message. Address the user by name if appropriate.
   `,
 });
 
@@ -67,14 +111,18 @@ const generateWelcomeMessageFlow = ai.defineFlow(
     if (!userId) {
         throw new Error('User not authenticated');
     } 
-    const profile = await getBusinessBasics(userId);
+    const profile = await getBusinessProfile(userId);
+
+    if (!profile) {
+      return { welcomeMessage: "I'm sorry, my configuration is not complete yet. Please try again later." };
+    }
 
     const {output} = await prompt({
       customerName: input.customerName,
       socialMediaPlatform: input.socialMediaPlatform,
       userMessage: input.userMessage,
-      businessName: profile?.companyName || "the business",
-      businessDescription: profile?.description,
+      chatHistory: input.chatHistory,
+      businessProfile: profile,
     });
     return output!;
   }
