@@ -189,6 +189,7 @@ export default function ConfigureAiPage() {
     const [escalationProtocol, setEscalationProtocol] = useState('escalate');
     const [followUpQuestions, setFollowUpQuestions] = useState(false);
     const [proactiveSuggestions, setProactiveSuggestions] = useState(false);
+    const [additionalResponseGuidelines, setAdditionalResponseGuidelines] = useState('');
 
 
     useEffect(() => {
@@ -224,6 +225,9 @@ export default function ConfigureAiPage() {
                     }
                     if (profile.proactiveSuggestions) {
                         setProactiveSuggestions(profile.proactiveSuggestions);
+                    }
+                    if(profile.additionalResponseGuidelines) {
+                        setAdditionalResponseGuidelines(profile.additionalResponseGuidelines);
                     }
                 }
             });
@@ -679,10 +683,20 @@ export default function ConfigureAiPage() {
                                 </Label>
                             </div>
                         </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="additional-guidelines">Additional Response Guidelines</Label>
+                            <Textarea
+                                id="additional-guidelines"
+                                placeholder="e.g., Do not make promises about future product features. Always use positive language."
+                                value={additionalResponseGuidelines}
+                                onChange={(e) => setAdditionalResponseGuidelines(e.target.value)}
+                                rows={4}
+                            />
+                        </div>
                     </CardContent>
                     <CardFooter>
                         <Button 
-                            onClick={() => handleSave({ languageHandling, preferredResponseLength, escalationProtocol, followUpQuestions, proactiveSuggestions }, "Your response guidelines have been saved.")}
+                            onClick={() => handleSave({ languageHandling, preferredResponseLength, escalationProtocol, followUpQuestions, proactiveSuggestions, additionalResponseGuidelines }, "Your response guidelines have been saved.")}
                             disabled={isSaving || !user}>
                             {isSaving ? 'Saving...' : 'Save Guidelines'}
                         </Button>

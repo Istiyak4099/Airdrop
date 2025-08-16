@@ -39,6 +39,7 @@ export interface BusinessProfile {
     escalationProtocol?: string;
     followUpQuestions?: boolean;
     proactiveSuggestions?: boolean;
+    additionalResponseGuidelines?: string;
 }
 
 export async function saveBusinessProfile(profile: Partial<BusinessProfile>, userId: string): Promise<void> {
