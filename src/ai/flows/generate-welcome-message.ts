@@ -10,7 +10,7 @@
  */
 
 import {ai} from '@/ai/genkit';
-import { getBusinessProfile } from '@/services/business-profile-service';
+import { getBusinessBasics } from '@/services/business-profile-service';
 import {z} from 'genkit';
 
 const GenerateWelcomeMessageInputSchema = z.object({
@@ -67,7 +67,7 @@ const generateWelcomeMessageFlow = ai.defineFlow(
     if (!userId) {
         throw new Error('User not authenticated');
     } 
-    const profile = await getBusinessProfile(userId);
+    const profile = await getBusinessBasics(userId);
 
     const {output} = await prompt({
       customerName: input.customerName,

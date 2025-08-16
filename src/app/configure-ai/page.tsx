@@ -19,7 +19,14 @@ import { Building, Mic, List, Settings2, Bot, Send, ChevronDown, ChevronUp, Pack
 import { Skeleton } from '@/components/ui/skeleton';
 import { generateWelcomeMessage } from '@/ai/flows/generate-welcome-message';
 import { useToast } from '@/hooks/use-toast';
-import { saveBusinessProfile, getBusinessProfile, BusinessProfile } from '@/services/business-profile-service';
+import { 
+    saveBusinessBasics, getBusinessBasics, BusinessBasics,
+    saveProducts, getProducts, Product,
+    saveFaqs, getFaqs, FAQ,
+    saveBrandVoice, getBrandVoice, BrandVoice, BrandVoiceSettings, BrandVoiceState,
+    saveResponseGuidelines, getResponseGuidelines, ResponseGuidelines,
+    saveAdvancedSettings, getAdvancedSettings, AdvancedSettings
+} from '@/services/business-profile-service';
 import { useAuth } from '@/hooks/use-auth';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -32,28 +39,6 @@ interface Message {
   sender: 'user' | 'ai';
   content: string | React.ReactNode;
 }
-
-interface Product {
-  id: number;
-  name: string;
-  price: string;
-  description: string;
-}
-
-interface FAQ {
-  id: number;
-  question: string;
-  answer: string;
-}
-
-type BrandVoiceState = 'left' | 'neutral' | 'right';
-
-interface BrandVoice {
-    professionalism: BrandVoiceState;
-    verbosity: BrandVoiceState;
-    formality: BrandVoiceState;
-}
-
 
 function AiResponsePreview() {
   const { user } = useAuth();
@@ -170,28 +155,40 @@ export default function ConfigureAiPage() {
     const { toast } = useToast();
     const { user, loading } = useAuth();
     const [activeTab, setActiveTab] = useState('business-basics');
+    const [isSaving, setIsSaving] = useState(false);
+
+    // State for Business Basics
     const [businessName, setBusinessName] = useState('');
     const [industry, setIndustry] = useState('');
     const [description, setDescription] = useState('');
-    const [isSaving, setIsSaving] = useState(false);
+
+    // State for Products & Services
     const [products, setProducts] = useState<Product[]>([
         { id: Date.now(), name: '', price: '', description: '' },
     ]);
+
+    // State for FAQs
     const [faqs, setFaqs] = useState<FAQ[]>([
         { id: Date.now(), question: '', answer: '' },
     ]);
+
+    // State for Brand Voice
     const [brandVoice, setBrandVoice] = useState<BrandVoice>({
         professionalism: 'neutral',
         verbosity: 'neutral',
         formality: 'neutral',
     });
     const [writingStyleExample, setWritingStyleExample] = useState('');
+    
+    // State for Response Guidelines
     const [languageHandling, setLanguageHandling] = useState('auto-detect');
     const [preferredResponseLength, setPreferredResponseLength] = useState('short');
     const [escalationProtocol, setEscalationProtocol] = useState('escalate');
     const [followUpQuestions, setFollowUpQuestions] = useState(false);
     const [proactiveSuggestions, setProactiveSuggestions] = useState(false);
     const [additionalResponseGuidelines, setAdditionalResponseGuidelines] = useState('');
+    
+    // State for Advanced Settings
     const [companyPolicies, setCompanyPolicies] = useState('');
     const [sensitiveTopicsHandling, setSensitiveTopicsHandling] = useState('');
     const [complianceRequirements, setComplianceRequirements] = useState('');
@@ -200,59 +197,51 @@ export default function ConfigureAiPage() {
 
     useEffect(() => {
         if (user) {
-            getBusinessProfile(user.uid).then(profile => {
-                if (profile) {
-                    setBusinessName(profile.companyName || '');
-                    setIndustry(profile.industry || '');
-                    setDescription(profile.description || '');
-                    if (profile.products && profile.products.length > 0) {
-                      setProducts(profile.products);
-                    }
-                    if (profile.faqs && profile.faqs.length > 0) {
-                      setFaqs(profile.faqs);
-                    }
-                    if(profile.brandVoice) {
-                        setBrandVoice(profile.brandVoice);
-                    }
-                    if (profile.writingStyleExample) {
-                        setWritingStyleExample(profile.writingStyleExample);
-                    }
-                    if(profile.languageHandling) {
-                        setLanguageHandling(profile.languageHandling);
-                    }
-                    if(profile.preferredResponseLength) {
-                        setPreferredResponseLength(profile.preferredResponseLength);
-                    }
-                    if (profile.escalationProtocol) {
-                        setEscalationProtocol(profile.escalationProtocol);
-                    }
-                    if (profile.followUpQuestions) {
-                        setFollowUpQuestions(profile.followUpQuestions);
-                    }
-                    if (profile.proactiveSuggestions) {
-                        setProactiveSuggestions(profile.proactiveSuggestions);
-                    }
-                    if(profile.additionalResponseGuidelines) {
-                        setAdditionalResponseGuidelines(profile.additionalResponseGuidelines);
-                    }
-                    if (profile.companyPolicies) {
-                        setCompanyPolicies(profile.companyPolicies);
-                    }
-                    if (profile.sensitiveTopicsHandling) {
-                        setSensitiveTopicsHandling(profile.sensitiveTopicsHandling);
-                    }
-                    if (profile.complianceRequirements) {
-                        setComplianceRequirements(profile.complianceRequirements);
-                    }
-                    if (profile.additionalKnowledge) {
-                        setAdditionalKnowledge(profile.additionalKnowledge);
-                    }
+            getBusinessBasics(user.uid).then(data => {
+                if (data) {
+                    setBusinessName(data.companyName || '');
+                    setIndustry(data.industry || '');
+                    setDescription(data.description || '');
+                }
+            });
+            getProducts(user.uid).then(data => {
+                if (data && data.products.length > 0) {
+                    setProducts(data.products);
+                }
+            });
+            getFaqs(user.uid).then(data => {
+                if (data && data.faqs.length > 0) {
+                    setFaqs(data.faqs);
+                }
+            });
+            getBrandVoice(user.uid).then(data => {
+                if (data) {
+                    if (data.brandVoice) setBrandVoice(data.brandVoice);
+                    if (data.writingStyleExample) setWritingStyleExample(data.writingStyleExample);
+                }
+            });
+            getResponseGuidelines(user.uid).then(data => {
+                if (data) {
+                    if(data.languageHandling) setLanguageHandling(data.languageHandling);
+                    if(data.preferredResponseLength) setPreferredResponseLength(data.preferredResponseLength);
+                    if(data.escalationProtocol) setEscalationProtocol(data.escalationProtocol);
+                    if(data.followUpQuestions) setFollowUpQuestions(data.followUpQuestions);
+                    if(data.proactiveSuggestions) setProactiveSuggestions(data.proactiveSuggestions);
+                    if(data.additionalResponseGuidelines) setAdditionalResponseGuidelines(data.additionalResponseGuidelines);
+                }
+            });
+            getAdvancedSettings(user.uid).then(data => {
+                if (data) {
+                    if (data.companyPolicies) setCompanyPolicies(data.companyPolicies);
+                    if (data.sensitiveTopicsHandling) setSensitiveTopicsHandling(data.sensitiveTopicsHandling);
+                    if (data.complianceRequirements) setComplianceRequirements(data.complianceRequirements);
+                    if (data.additionalKnowledge) setAdditionalKnowledge(data.additionalKnowledge);
                 }
             });
         }
     }, [user]);
 
-    const handleSave = async (data: Partial<BusinessProfile>, successMessage: string, showToast = true) => {
+    const handleSave = async (saveAction: () => Promise<void>, successMessage: string, showToast = true) => {
          if (!user) {
             toast({
                 title: "Error",
@@ -264,7 +253,7 @@ export default function ConfigureAiPage() {
 
         setIsSaving(true);
         try {
-            await saveBusinessProfile(data, user.uid);
+            await saveAction();
             if (showToast) {
                 toast({
                     title: "Settings Saved!",
@@ -272,7 +261,7 @@ export default function ConfigureAiPage() {
                 });
             }
         } catch (error) {
-            console.error("Failed to save profile:", error);
+            console.error("Failed to save settings:", error);
             if (showToast) {
                 toast({
                     title: "Save Failed",
@@ -284,6 +273,18 @@ export default function ConfigureAiPage() {
             setIsSaving(false);
         }
     };
+
+    const handleSaveAndNext = async (saveAction: () => Promise<void>, successMessage: string, nextTab: string) => {
+        await handleSave(saveAction, successMessage, false);
+        setActiveTab(nextTab);
+    };
+
+    const saveBusinessBasicsAction = () => saveBusinessBasics({ companyName: businessName, industry, description }, user!.uid);
+    const saveProductsAction = () => saveProducts({ products }, user!.uid);
+    const saveFaqsAction = () => saveFaqs({ faqs }, user!.uid);
+    const saveBrandVoiceAction = () => saveBrandVoice({ brandVoice, writingStyleExample }, user!.uid);
+    const saveResponseGuidelinesAction = () => saveResponseGuidelines({ languageHandling, preferredResponseLength, escalationProtocol, followUpQuestions, proactiveSuggestions, additionalResponseGuidelines }, user!.uid);
+    const saveAdvancedSettingsAction = () => saveAdvancedSettings({ companyPolicies, sensitiveTopicsHandling, complianceRequirements, additionalKnowledge }, user!.uid);
 
 
     const addProduct = () => {
@@ -320,11 +321,6 @@ export default function ConfigureAiPage() {
             verbosity: 'neutral',
             formality: 'neutral',
         });
-    };
-
-    const handleSaveAndNext = async (data: Partial<BusinessProfile>, successMessage: string, nextTab: string) => {
-        await handleSave(data, successMessage, false);
-        setActiveTab(nextTab);
     };
 
     if (loading) {
@@ -444,12 +440,12 @@ export default function ConfigureAiPage() {
                     <CardFooter>
                        <div className="flex w-full justify-between">
                             <Button 
-                                onClick={() => handleSave({ companyName: businessName, industry, description }, "Your business basics have been updated.")} 
+                                onClick={() => handleSave(saveBusinessBasicsAction, "Your business basics have been updated.")} 
                                 disabled={isSaving || !user}
                                 className="bg-green-600 hover:bg-green-700">
                                 {isSaving ? 'Saving...' : 'Save Business Basics'}
                             </Button>
-                             <Button onClick={() => handleSaveAndNext({ companyName: businessName, industry, description }, "Your business basics have been updated.", 'products-services')}>
+                             <Button onClick={() => handleSaveAndNext(saveBusinessBasicsAction, "Your business basics have been updated.", 'products-services')}>
                                 Next: Products & Services <ArrowRight className="ml-2 h-4 w-4" />
                             </Button>
                         </div>
@@ -515,12 +511,12 @@ export default function ConfigureAiPage() {
                     <CardFooter>
                         <div className="flex w-full justify-between">
                             <Button 
-                                onClick={() => handleSave({ products }, "Your products have been saved.")}
+                                onClick={() => handleSave(saveProductsAction, "Your products have been saved.")}
                                 disabled={isSaving || !user}
                                 className="bg-green-600 hover:bg-green-700">
                                 {isSaving ? 'Saving...' : 'Save Products'}
                             </Button>
-                             <Button onClick={() => handleSaveAndNext({ products }, "Your products have been saved.", 'faqs')}>
+                             <Button onClick={() => handleSaveAndNext(saveProductsAction, "Your products have been saved.", 'faqs')}>
                                 Next: FAQs <ArrowRight className="ml-2 h-4 w-4" />
                             </Button>
                         </div>
@@ -575,12 +571,12 @@ export default function ConfigureAiPage() {
                     <CardFooter>
                          <div className="flex w-full justify-between">
                             <Button 
-                                onClick={() => handleSave({ faqs }, "Your FAQs have been saved.")}
+                                onClick={() => handleSave(saveFaqsAction, "Your FAQs have been saved.")}
                                 disabled={isSaving || !user}
                                 className="bg-green-600 hover:bg-green-700">
                                 {isSaving ? 'Saving...' : 'Save FAQs'}
                             </Button>
-                            <Button onClick={() => handleSaveAndNext({ faqs }, "Your FAQs have been saved.", 'brand-voice')}>
+                            <Button onClick={() => handleSaveAndNext(saveFaqsAction, "Your FAQs have been saved.", 'brand-voice')}>
                                 Next: Brand Voice <ArrowRight className="ml-2 h-4 w-4" />
                             </Button>
                         </div>
@@ -649,12 +645,12 @@ export default function ConfigureAiPage() {
                     <CardFooter>
                         <div className="flex w-full justify-between">
                             <Button 
-                                onClick={() => handleSave({ brandVoice, writingStyleExample }, "Your brand voice settings have been saved.")}
+                                onClick={() => handleSave(saveBrandVoiceAction, "Your brand voice settings have been saved.")}
                                 disabled={isSaving || !user}
                                 className="bg-green-600 hover:bg-green-700">
                                 {isSaving ? 'Saving...' : 'Save Brand Voice'}
                             </Button>
-                             <Button onClick={() => handleSaveAndNext({ brandVoice, writingStyleExample }, "Your brand voice settings have been saved.", 'response-guidelines')}>
+                             <Button onClick={() => handleSaveAndNext(saveBrandVoiceAction, "Your brand voice settings have been saved.", 'response-guidelines')}>
                                 Next: Response Guidelines <ArrowRight className="ml-2 h-4 w-4" />
                             </Button>
                         </div>
@@ -747,12 +743,12 @@ export default function ConfigureAiPage() {
                     <CardFooter>
                         <div className="flex w-full justify-between">
                             <Button 
-                                onClick={() => handleSave({ languageHandling, preferredResponseLength, escalationProtocol, followUpQuestions, proactiveSuggestions, additionalResponseGuidelines }, "Your response guidelines have been saved.")}
+                                onClick={() => handleSave(saveResponseGuidelinesAction, "Your response guidelines have been saved.")}
                                 disabled={isSaving || !user}
                                 className="bg-green-600 hover:bg-green-700">
                                 {isSaving ? 'Saving...' : 'Save Guidelines'}
                             </Button>
-                            <Button onClick={() => handleSaveAndNext({ languageHandling, preferredResponseLength, escalationProtocol, followUpQuestions, proactiveSuggestions, additionalResponseGuidelines }, "Your response guidelines have been saved.", 'advanced-settings')}>
+                            <Button onClick={() => handleSaveAndNext(saveResponseGuidelinesAction, "Your response guidelines have been saved.", 'advanced-settings')}>
                                 Next: Advanced Settings <ArrowRight className="ml-2 h-4 w-4" />
                             </Button>
                         </div>
@@ -809,7 +805,7 @@ export default function ConfigureAiPage() {
                     </CardContent>
                     <CardFooter>
                         <Button
-                            onClick={() => handleSave({ companyPolicies, sensitiveTopicsHandling, complianceRequirements, additionalKnowledge }, "Your advanced settings have been saved.")}
+                            onClick={() => handleSave(saveAdvancedSettingsAction, "Your advanced settings have been saved.")}
                             disabled={isSaving || !user}
                             className="bg-green-600 hover:bg-green-700">
                             {isSaving ? 'Saving...' : 'Save Advanced Settings'}
