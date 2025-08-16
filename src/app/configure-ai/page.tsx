@@ -185,6 +185,7 @@ export default function ConfigureAiPage() {
     const [writingStyleExample, setWritingStyleExample] = useState('');
     const [languageHandling, setLanguageHandling] = useState('auto-detect');
     const [preferredResponseLength, setPreferredResponseLength] = useState('short');
+    const [escalationProtocol, setEscalationProtocol] = useState('escalate');
 
 
     useEffect(() => {
@@ -211,6 +212,9 @@ export default function ConfigureAiPage() {
                     }
                     if(profile.preferredResponseLength) {
                         setPreferredResponseLength(profile.preferredResponseLength);
+                    }
+                    if (profile.escalationProtocol) {
+                        setEscalationProtocol(profile.escalationProtocol);
                     }
                 }
             });
@@ -627,10 +631,23 @@ export default function ConfigureAiPage() {
                                 </SelectContent>
                             </Select>
                         </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="escalation-protocol">When the AI Doesn't Know an Answer:</Label>
+                            <Select value={escalationProtocol} onValueChange={setEscalationProtocol}>
+                                <SelectTrigger id="escalation-protocol">
+                                    <SelectValue placeholder="Select an action" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="escalate">Offer to escalate to a human team member</SelectItem>
+                                    <SelectItem value="admit-limitations">Admit limitations and offer alternative help</SelectItem>
+                                    <SelectItem value="research">Offer to research and follow up later</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
                     </CardContent>
                     <CardFooter>
                         <Button 
-                            onClick={() => handleSave({ languageHandling, preferredResponseLength }, "Your response guidelines have been saved.")}
+                            onClick={() => handleSave({ languageHandling, preferredResponseLength, escalationProtocol }, "Your response guidelines have been saved.")}
                             disabled={isSaving || !user}>
                             {isSaving ? 'Saving...' : 'Save Guidelines'}
                         </Button>

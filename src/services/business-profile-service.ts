@@ -36,6 +36,7 @@ export interface BusinessProfile {
     writingStyleExample?: string;
     languageHandling?: string;
     preferredResponseLength?: string;
+    escalationProtocol?: string;
 }
 
 export async function saveBusinessProfile(profile: Partial<BusinessProfile>, userId: string): Promise<void> {
