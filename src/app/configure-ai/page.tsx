@@ -190,6 +190,10 @@ export default function ConfigureAiPage() {
     const [followUpQuestions, setFollowUpQuestions] = useState(false);
     const [proactiveSuggestions, setProactiveSuggestions] = useState(false);
     const [additionalResponseGuidelines, setAdditionalResponseGuidelines] = useState('');
+    const [companyPolicies, setCompanyPolicies] = useState('');
+    const [sensitiveTopicsHandling, setSensitiveTopicsHandling] = useState('');
+    const [complianceRequirements, setComplianceRequirements] = useState('');
+    const [additionalKnowledge, setAdditionalKnowledge] = useState('');
 
 
     useEffect(() => {
@@ -228,6 +232,18 @@ export default function ConfigureAiPage() {
                     }
                     if(profile.additionalResponseGuidelines) {
                         setAdditionalResponseGuidelines(profile.additionalResponseGuidelines);
+                    }
+                    if (profile.companyPolicies) {
+                        setCompanyPolicies(profile.companyPolicies);
+                    }
+                    if (profile.sensitiveTopicsHandling) {
+                        setSensitiveTopicsHandling(profile.sensitiveTopicsHandling);
+                    }
+                    if (profile.complianceRequirements) {
+                        setComplianceRequirements(profile.complianceRequirements);
+                    }
+                    if (profile.additionalKnowledge) {
+                        setAdditionalKnowledge(profile.additionalKnowledge);
                     }
                 }
             });
@@ -704,15 +720,61 @@ export default function ConfigureAiPage() {
                 </Card>
             </TabsContent>
             <TabsContent value="advanced-settings">
-                 <Card>
+                <Card>
                     <CardHeader>
                         <CardTitle>Advanced Settings</CardTitle>
                         <CardDescription>Fine-tune advanced AI parameters.</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                       <p>Configure advanced settings here.</p>
+                    <CardContent className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="company-policies">Company Policies</Label>
+                            <Textarea
+                                id="company-policies"
+                                placeholder="e.g., Return policy, shipping information, privacy policy."
+                                value={companyPolicies}
+                                onChange={(e) => setCompanyPolicies(e.target.value)}
+                                rows={4}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="sensitive-topics">Sensitive Topics Handling</Label>
+                            <Textarea
+                                id="sensitive-topics"
+                                placeholder="e.g., How to respond to customer complaints, negative feedback, or emergencies."
+                                value={sensitiveTopicsHandling}
+                                onChange={(e) => setSensitiveTopicsHandling(e.target.value)}
+                                rows={4}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="compliance">Compliance Requirements</Label>
+                            <Textarea
+                                id="compliance"
+                                placeholder="e.g., GDPR, HIPAA, or other industry-specific regulations to adhere to."
+                                value={complianceRequirements}
+                                onChange={(e) => setComplianceRequirements(e.target.value)}
+                                rows={4}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="additional-knowledge">Additional Knowledge</Label>
+                            <Textarea
+                                id="additional-knowledge"
+                                placeholder="e.g., Specific terminology, jargon, or any other information the AI should know."
+                                value={additionalKnowledge}
+                                onChange={(e) => setAdditionalKnowledge(e.target.value)}
+                                rows={4}
+                            />
+                        </div>
                     </CardContent>
-                 </Card>
+                    <CardFooter>
+                        <Button
+                            onClick={() => handleSave({ companyPolicies, sensitiveTopicsHandling, complianceRequirements, additionalKnowledge }, "Your advanced settings have been saved.")}
+                            disabled={isSaving || !user}>
+                            {isSaving ? 'Saving...' : 'Save Advanced Settings'}
+                        </Button>
+                    </CardFooter>
+                </Card>
             </TabsContent>
         </Tabs>
         <AiResponsePreview />

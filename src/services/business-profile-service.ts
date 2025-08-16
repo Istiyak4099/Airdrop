@@ -40,6 +40,10 @@ export interface BusinessProfile {
     followUpQuestions?: boolean;
     proactiveSuggestions?: boolean;
     additionalResponseGuidelines?: string;
+    companyPolicies?: string;
+    sensitiveTopicsHandling?: string;
+    complianceRequirements?: string;
+    additionalKnowledge?: string;
 }
 
 export async function saveBusinessProfile(profile: Partial<BusinessProfile>, userId: string): Promise<void> {
