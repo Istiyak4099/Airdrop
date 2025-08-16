@@ -189,16 +189,28 @@ export default function ConfigureAiPage() {
         if (user) {
             getBusinessProfile(user.uid).then(profile => {
                 if (profile) {
-                    setBusinessName(profile.companyName);
-                    setIndustry(profile.industry);
-                    setDescription(profile.description);
+                    setBusinessName(profile.companyName || '');
+                    setIndustry(profile.industry || '');
+                    setDescription(profile.description || '');
+                    if (profile.products && profile.products.length > 0) {
+                      setProducts(profile.products);
+                    }
+                    if (profile.faqs && profile.faqs.length > 0) {
+                      setFaqs(profile.faqs);
+                    }
+                    if(profile.brandVoice) {
+                        setBrandVoice(profile.brandVoice);
+                    }
+                    if (profile.writingStyleExample) {
+                        setWritingStyleExample(profile.writingStyleExample);
+                    }
                 }
             });
         }
     }, [user]);
 
-    const handleSaveChanges = async () => {
-        if (!user) {
+    const handleSave = async (data: Partial<BusinessProfile>, successMessage: string) => {
+         if (!user) {
             toast({
                 title: "Error",
                 description: "You must be logged in to save changes.",
@@ -209,22 +221,23 @@ export default function ConfigureAiPage() {
 
         setIsSaving(true);
         try {
-            await saveBusinessProfile({ companyName: businessName, industry, description }, user.uid);
+            await saveBusinessProfile(data, user.uid);
             toast({
                 title: "Settings Saved!",
-                description: "Your business basics have been updated.",
+                description: successMessage,
             });
         } catch (error) {
             console.error("Failed to save profile:", error);
             toast({
                 title: "Save Failed",
-                description: "Could not save your business profile. Please try again.",
+                description: "Could not save your settings. Please try again.",
                 variant: "destructive"
             });
         } finally {
             setIsSaving(false);
         }
     };
+
 
     const addProduct = () => {
         setProducts(prev => [...prev, { id: Date.now(), name: '', price: '', description: '' }]);
@@ -378,7 +391,11 @@ export default function ConfigureAiPage() {
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button onClick={handleSaveChanges} disabled={isSaving || !user}>{isSaving ? 'Saving...' : 'Save Changes'}</Button>
+                        <Button 
+                            onClick={() => handleSave({ companyName: businessName, industry, description }, "Your business basics have been updated.")} 
+                            disabled={isSaving || !user}>
+                            {isSaving ? 'Saving...' : 'Save Changes'}
+                        </Button>
                     </CardFooter>
                 </Card>
             </TabsContent>
@@ -439,7 +456,11 @@ export default function ConfigureAiPage() {
                         </Button>
                     </CardContent>
                     <CardFooter>
-                        <Button disabled={isSaving || !user}>{isSaving ? 'Saving...' : 'Save Products'}</Button>
+                        <Button 
+                            onClick={() => handleSave({ products }, "Your products have been saved.")}
+                            disabled={isSaving || !user}>
+                            {isSaving ? 'Saving...' : 'Save Products'}
+                        </Button>
                     </CardFooter>
                 </Card>
             </TabsContent>
@@ -489,7 +510,11 @@ export default function ConfigureAiPage() {
                         </Button>
                     </CardContent>
                     <CardFooter>
-                        <Button disabled={isSaving || !user}>{isSaving ? 'Saving...' : 'Save FAQs'}</Button>
+                        <Button 
+                            onClick={() => handleSave({ faqs }, "Your FAQs have been saved.")}
+                            disabled={isSaving || !user}>
+                            {isSaving ? 'Saving...' : 'Save FAQs'}
+                        </Button>
                     </CardFooter>
                  </Card>
             </TabsContent>
@@ -553,7 +578,11 @@ export default function ConfigureAiPage() {
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button disabled={isSaving || !user}>{isSaving ? 'Saving...' : 'Save Brand Voice'}</Button>
+                        <Button 
+                            onClick={() => handleSave({ brandVoice, writingStyleExample }, "Your brand voice settings have been saved.")}
+                            disabled={isSaving || !user}>
+                            {isSaving ? 'Saving...' : 'Save Brand Voice'}
+                        </Button>
                     </CardFooter>
                  </Card>
             </TabsContent>
