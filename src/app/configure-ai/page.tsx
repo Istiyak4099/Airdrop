@@ -252,7 +252,7 @@ export default function ConfigureAiPage() {
         }
     }, [user]);
 
-    const handleSave = async (data: Partial<BusinessProfile>, successMessage: string) => {
+    const handleSave = async (data: Partial<BusinessProfile>, successMessage: string, showToast = true) => {
          if (!user) {
             toast({
                 title: "Error",
@@ -265,17 +265,21 @@ export default function ConfigureAiPage() {
         setIsSaving(true);
         try {
             await saveBusinessProfile(data, user.uid);
-            toast({
-                title: "Settings Saved!",
-                description: successMessage,
-            });
+            if (showToast) {
+                toast({
+                    title: "Settings Saved!",
+                    description: successMessage,
+                });
+            }
         } catch (error) {
             console.error("Failed to save profile:", error);
-            toast({
-                title: "Save Failed",
-                description: "Could not save your settings. Please try again.",
-                variant: "destructive"
-            });
+            if (showToast) {
+                toast({
+                    title: "Save Failed",
+                    description: "Could not save your settings. Please try again.",
+                    variant: "destructive"
+                });
+            }
         } finally {
             setIsSaving(false);
         }
@@ -318,10 +322,10 @@ export default function ConfigureAiPage() {
         });
     };
 
-    const handleNextTab = (nextTab: string) => {
+    const handleSaveAndNext = async (data: Partial<BusinessProfile>, successMessage: string, nextTab: string) => {
+        await handleSave(data, successMessage, false);
         setActiveTab(nextTab);
     };
-
 
     if (loading) {
         return (
@@ -445,7 +449,7 @@ export default function ConfigureAiPage() {
                                 className="bg-green-600 hover:bg-green-700">
                                 {isSaving ? 'Saving...' : 'Save Business Basics'}
                             </Button>
-                             <Button onClick={() => handleNextTab('products-services')}>
+                             <Button onClick={() => handleSaveAndNext({ companyName: businessName, industry, description }, "Your business basics have been updated.", 'products-services')}>
                                 Next: Products & Services <ArrowRight className="ml-2 h-4 w-4" />
                             </Button>
                         </div>
@@ -516,7 +520,7 @@ export default function ConfigureAiPage() {
                                 className="bg-green-600 hover:bg-green-700">
                                 {isSaving ? 'Saving...' : 'Save Products'}
                             </Button>
-                             <Button onClick={() => handleNextTab('faqs')}>
+                             <Button onClick={() => handleSaveAndNext({ products }, "Your products have been saved.", 'faqs')}>
                                 Next: FAQs <ArrowRight className="ml-2 h-4 w-4" />
                             </Button>
                         </div>
@@ -576,7 +580,7 @@ export default function ConfigureAiPage() {
                                 className="bg-green-600 hover:bg-green-700">
                                 {isSaving ? 'Saving...' : 'Save FAQs'}
                             </Button>
-                            <Button onClick={() => handleNextTab('brand-voice')}>
+                            <Button onClick={() => handleSaveAndNext({ faqs }, "Your FAQs have been saved.", 'brand-voice')}>
                                 Next: Brand Voice <ArrowRight className="ml-2 h-4 w-4" />
                             </Button>
                         </div>
@@ -650,7 +654,7 @@ export default function ConfigureAiPage() {
                                 className="bg-green-600 hover:bg-green-700">
                                 {isSaving ? 'Saving...' : 'Save Brand Voice'}
                             </Button>
-                             <Button onClick={() => handleNextTab('response-guidelines')}>
+                             <Button onClick={() => handleSaveAndNext({ brandVoice, writingStyleExample }, "Your brand voice settings have been saved.", 'response-guidelines')}>
                                 Next: Response Guidelines <ArrowRight className="ml-2 h-4 w-4" />
                             </Button>
                         </div>
@@ -748,7 +752,7 @@ export default function ConfigureAiPage() {
                                 className="bg-green-600 hover:bg-green-700">
                                 {isSaving ? 'Saving...' : 'Save Guidelines'}
                             </Button>
-                            <Button onClick={() => handleNextTab('advanced-settings')}>
+                            <Button onClick={() => handleSaveAndNext({ languageHandling, preferredResponseLength, escalationProtocol, followUpQuestions, proactiveSuggestions, additionalResponseGuidelines }, "Your response guidelines have been saved.", 'advanced-settings')}>
                                 Next: Advanced Settings <ArrowRight className="ml-2 h-4 w-4" />
                             </Button>
                         </div>
