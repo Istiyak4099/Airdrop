@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import React, { useState, useTransition, useEffect } from 'react';
@@ -14,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Building, Mic, List, Settings2, Bot, Send, ChevronDown, ChevronUp, Package, HelpCircle, PlusCircle, Trash2, RotateCcw } from "lucide-react"
+import { Building, Mic, List, Settings2, Bot, Send, ChevronDown, ChevronUp, Package, HelpCircle, PlusCircle, Trash2, RotateCcw, ArrowRight } from "lucide-react"
 import { Skeleton } from '@/components/ui/skeleton';
 import { generateWelcomeMessage } from '@/ai/flows/generate-welcome-message';
 import { useToast } from '@/hooks/use-toast';
@@ -168,6 +169,7 @@ function AvatarFallback({ children }: { children: React.ReactNode }) {
 export default function ConfigureAiPage() {
     const { toast } = useToast();
     const { user, loading } = useAuth();
+    const [activeTab, setActiveTab] = useState('business-basics');
     const [businessName, setBusinessName] = useState('');
     const [industry, setIndustry] = useState('');
     const [description, setDescription] = useState('');
@@ -316,6 +318,10 @@ export default function ConfigureAiPage() {
         });
     };
 
+    const handleNextTab = (nextTab: string) => {
+        setActiveTab(nextTab);
+    };
+
 
     if (loading) {
         return (
@@ -348,7 +354,7 @@ export default function ConfigureAiPage() {
                 Customize how your AI responds to customers across all platforms.
             </p>
         </div>
-        <Tabs defaultValue="business-basics" className="space-y-4">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
             <TabsList className="flex-col md:flex-row h-auto md:h-10">
                 <TabsTrigger value="business-basics" className="w-full justify-start md:justify-center">
                     <Building className="mr-2 h-5 w-5 text-blue-500" />
@@ -432,11 +438,17 @@ export default function ConfigureAiPage() {
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button 
-                            onClick={() => handleSave({ companyName: businessName, industry, description }, "Your business basics have been updated.")} 
-                            disabled={isSaving || !user}>
-                            {isSaving ? 'Saving...' : 'Save Changes'}
-                        </Button>
+                       <div className="flex w-full justify-between">
+                            <Button 
+                                onClick={() => handleSave({ companyName: businessName, industry, description }, "Your business basics have been updated.")} 
+                                disabled={isSaving || !user}
+                                className="bg-green-600 hover:bg-green-700">
+                                {isSaving ? 'Saving...' : 'Save Changes'}
+                            </Button>
+                             <Button onClick={() => handleNextTab('products-services')}>
+                                Next: Products & Services <ArrowRight className="ml-2 h-4 w-4" />
+                            </Button>
+                        </div>
                     </CardFooter>
                 </Card>
             </TabsContent>
@@ -497,11 +509,17 @@ export default function ConfigureAiPage() {
                         </Button>
                     </CardContent>
                     <CardFooter>
-                        <Button 
-                            onClick={() => handleSave({ products }, "Your products have been saved.")}
-                            disabled={isSaving || !user}>
-                            {isSaving ? 'Saving...' : 'Save Products'}
-                        </Button>
+                        <div className="flex w-full justify-between">
+                            <Button 
+                                onClick={() => handleSave({ products }, "Your products have been saved.")}
+                                disabled={isSaving || !user}
+                                className="bg-green-600 hover:bg-green-700">
+                                {isSaving ? 'Saving...' : 'Save Products'}
+                            </Button>
+                             <Button onClick={() => handleNextTab('faqs')}>
+                                Next: FAQs <ArrowRight className="ml-2 h-4 w-4" />
+                            </Button>
+                        </div>
                     </CardFooter>
                 </Card>
             </TabsContent>
@@ -551,11 +569,17 @@ export default function ConfigureAiPage() {
                         </Button>
                     </CardContent>
                     <CardFooter>
-                        <Button 
-                            onClick={() => handleSave({ faqs }, "Your FAQs have been saved.")}
-                            disabled={isSaving || !user}>
-                            {isSaving ? 'Saving...' : 'Save FAQs'}
-                        </Button>
+                         <div className="flex w-full justify-between">
+                            <Button 
+                                onClick={() => handleSave({ faqs }, "Your FAQs have been saved.")}
+                                disabled={isSaving || !user}
+                                className="bg-green-600 hover:bg-green-700">
+                                {isSaving ? 'Saving...' : 'Save FAQs'}
+                            </Button>
+                            <Button onClick={() => handleNextTab('brand-voice')}>
+                                Next: Brand Voice <ArrowRight className="ml-2 h-4 w-4" />
+                            </Button>
+                        </div>
                     </CardFooter>
                  </Card>
             </TabsContent>
@@ -619,11 +643,17 @@ export default function ConfigureAiPage() {
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button 
-                            onClick={() => handleSave({ brandVoice, writingStyleExample }, "Your brand voice settings have been saved.")}
-                            disabled={isSaving || !user}>
-                            {isSaving ? 'Saving...' : 'Save Brand Voice'}
-                        </Button>
+                        <div className="flex w-full justify-between">
+                            <Button 
+                                onClick={() => handleSave({ brandVoice, writingStyleExample }, "Your brand voice settings have been saved.")}
+                                disabled={isSaving || !user}
+                                className="bg-green-600 hover:bg-green-700">
+                                {isSaving ? 'Saving...' : 'Save Brand Voice'}
+                            </Button>
+                             <Button onClick={() => handleNextTab('response-guidelines')}>
+                                Next: Response Guidelines <ArrowRight className="ml-2 h-4 w-4" />
+                            </Button>
+                        </div>
                     </CardFooter>
                  </Card>
             </TabsContent>
@@ -711,11 +741,17 @@ export default function ConfigureAiPage() {
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button 
-                            onClick={() => handleSave({ languageHandling, preferredResponseLength, escalationProtocol, followUpQuestions, proactiveSuggestions, additionalResponseGuidelines }, "Your response guidelines have been saved.")}
-                            disabled={isSaving || !user}>
-                            {isSaving ? 'Saving...' : 'Save Guidelines'}
-                        </Button>
+                        <div className="flex w-full justify-between">
+                            <Button 
+                                onClick={() => handleSave({ languageHandling, preferredResponseLength, escalationProtocol, followUpQuestions, proactiveSuggestions, additionalResponseGuidelines }, "Your response guidelines have been saved.")}
+                                disabled={isSaving || !user}
+                                className="bg-green-600 hover:bg-green-700">
+                                {isSaving ? 'Saving...' : 'Save Guidelines'}
+                            </Button>
+                            <Button onClick={() => handleNextTab('advanced-settings')}>
+                                Next: Advanced Settings <ArrowRight className="ml-2 h-4 w-4" />
+                            </Button>
+                        </div>
                     </CardFooter>
                 </Card>
             </TabsContent>
@@ -770,7 +806,8 @@ export default function ConfigureAiPage() {
                     <CardFooter>
                         <Button
                             onClick={() => handleSave({ companyPolicies, sensitiveTopicsHandling, complianceRequirements, additionalKnowledge }, "Your advanced settings have been saved.")}
-                            disabled={isSaving || !user}>
+                            disabled={isSaving || !user}
+                            className="bg-green-600 hover:bg-green-700">
                             {isSaving ? 'Saving...' : 'Save Advanced Settings'}
                         </Button>
                     </CardFooter>
