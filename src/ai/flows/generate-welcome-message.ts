@@ -129,7 +129,7 @@ const generateWelcomeMessageFlow = ai.defineFlow(
 
     let languageInstruction = "You MUST respond in English.";
     if (profile.languageHandling === 'auto-detect') {
-      languageInstruction = "You MUST detect the language of the customer's message and respond in that same language.";
+      languageInstruction = "You MUST detect the language of the user's LATEST message ('New Customer Message') and respond in that same language, regardless of the language used in the 'Conversation History'.";
     }
 
     const {output} = await prompt({
