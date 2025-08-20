@@ -44,7 +44,8 @@ const prompt = ai.definePrompt({
         sender: z.enum(['user', 'ai']),
         content: z.string(),
       })).optional(),
-      businessProfile: z.any()
+      businessProfile: z.any(),
+      languageInstruction: z.string(),
   })},
   output: {schema: GenerateWelcomeMessageOutputSchema},
   prompt: `You are a friendly and helpful AI customer service assistant for {{businessProfile.companyName}}. Your main goal is to provide exceptional, human-like service to customers.
@@ -57,7 +58,7 @@ You MUST use the business information provided below as your knowledge base. You
 3.  **Ask for Clarification:** If a user's message is ambiguous (e.g., "price?"), ask clarifying questions to understand their needs (e.g., "I can help with that! Which product's price are you interested in?").
 4.  **Unavailable Products:** If a user asks for a product that is not in the 'Products/Services' list, politely state that it is unavailable. Do NOT suggest other products.
 5.  **Adhere to Brand Voice:** Match your tone to the brand voice settings provided.
-6.  **Language Handling:** {{#if (eq businessProfile.languageHandling "auto-detect")}}You MUST detect the language of the customer's message and respond in that same language.{{else}}You MUST respond in English.{{/if}}
+6.  **Language Handling:** {{languageInstruction}}
 
 ---
 **Business Profile for {{businessProfile.companyName}}**
@@ -126,14 +127,19 @@ const generateWelcomeMessageFlow = ai.defineFlow(
       return { welcomeMessage: "I'm sorry, my configuration is not complete yet. Please try again later." };
     }
 
+    let languageInstruction = "You MUST respond in English.";
+    if (profile.languageHandling === 'auto-detect') {
+      languageInstruction = "You MUST detect the language of the customer's message and respond in that same language.";
+    }
+
     const {output} = await prompt({
       customerName: input.customerName,
       socialMediaPlatform: input.socialMediaPlatform,
       userMessage: input.userMessage,
       chatHistory: input.chatHistory,
       businessProfile: profile,
+      languageInstruction,
     });
     return output!;
   }
 );
-
