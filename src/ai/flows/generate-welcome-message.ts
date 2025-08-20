@@ -12,6 +12,7 @@
 import {ai} from '@/ai/genkit';
 import { getBusinessProfile } from '@/services/business-profile-service';
 import {z} from 'genkit';
+import { detectLanguage } from './detect-language';
 
 const GenerateWelcomeMessageInputSchema = z.object({
   customerName: z.string().describe('The name of the customer.'),
@@ -54,7 +55,7 @@ You MUST use the business information provided below as your knowledge base. You
 
 **Key Instructions:**
 1.  **Be Conversational:** Do not just copy-paste information. Formulate full, natural-sounding sentences. For example, if a user asks "where is the shop?" and the answer in the FAQ is "Dhanmondi, Dhaka", you should reply "Our shop is located in Dhanmondi, Dhaka."
-2.  **Use Chat History:** Pay close attention to the \`chatHistory\` to understand the context of the conversation. Refer to previous messages to answer follow-up questions.
+2.  **Use Chat History:** Pay close attention to the 'chatHistory' to understand the context of the conversation. Refer to previous messages to answer follow-up questions.
 3.  **Ask for Clarification:** If a user's message is ambiguous (e.g., "price?"), ask clarifying questions to understand their needs (e.g., "I can help with that! Which product's price are you interested in?").
 4.  **Unavailable Products:** If a user asks for a product that is not in the 'Products/Services' list, politely state that it is unavailable. Do NOT suggest other products.
 5.  **Adhere to Brand Voice:** Match your tone to the brand voice settings provided.
@@ -116,7 +117,7 @@ const generateWelcomeMessageFlow = ai.defineFlow(
     outputSchema: GenerateWelcomeMessageOutputSchema,
   },
   async (input) => {
-    const { userId } = input;
+    const { userId, userMessage } = input;
     if (!userId) {
         throw new Error('User not authenticated');
     } 
@@ -128,7 +129,8 @@ const generateWelcomeMessageFlow = ai.defineFlow(
 
     let languageInstruction = "You MUST respond in English.";
     if (profile.languageHandling === 'auto-detect') {
-      languageInstruction = "You MUST detect the language of the user's LATEST message ('New Customer Message') and respond ONLY in that same language.";
+       const { language } = await detectLanguage({ message: userMessage });
+       languageInstruction = `You MUST respond in ${language}.`;
     }
 
     const {output} = await prompt({
