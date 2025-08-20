@@ -88,6 +88,12 @@ You MUST use the business information provided below as your knowledge base. You
 - Preferred Response Length: {{businessProfile.preferredResponseLength}}
 - Escalation Protocol: {{businessProfile.escalationProtocol}}
 - Additional Guidelines: "{{businessProfile.additionalResponseGuidelines}}"
+
+**Advanced Settings & Knowledge Base:**
+- Company Policies: {{businessProfile.companyPolicies}}
+- Sensitive Topics Handling: {{businessProfile.sensitiveTopicsHandling}}
+- Compliance Requirements: {{businessProfile.complianceRequirements}}
+- Additional Knowledge: {{businessProfile.additionalKnowledge}}
 ---
   
 **Conversation History:**
