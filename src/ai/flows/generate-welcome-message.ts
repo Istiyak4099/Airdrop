@@ -58,7 +58,6 @@ You MUST use the business information provided below as your knowledge base. You
 3.  **Ask for Clarification:** If a user's message is ambiguous (e.g., "price?"), ask clarifying questions to understand their needs (e.g., "I can help with that! Which product's price are you interested in?").
 4.  **Unavailable Products:** If a user asks for a product that is not in the 'Products/Services' list, politely state that it is unavailable. Do NOT suggest other products.
 5.  **Adhere to Brand Voice:** Match your tone to the brand voice settings provided.
-6.  **Language Handling:** {{languageInstruction}}
 
 ---
 **Business Profile for {{businessProfile.companyName}}**
@@ -106,7 +105,7 @@ You MUST use the business information provided below as your knowledge base. You
 A customer named {{customerName}} has sent the following message on {{socialMediaPlatform}}:
 "{{{userMessage}}}"
 
-Based on all the information and the conversation history, craft a helpful, conversational response to the user's LATEST message.
+Final Instruction: Based on all the information and the conversation history, craft a helpful, conversational response to the user's LATEST message. {{languageInstruction}}
   `,
 });
 
@@ -129,7 +128,7 @@ const generateWelcomeMessageFlow = ai.defineFlow(
 
     let languageInstruction = "You MUST respond in English.";
     if (profile.languageHandling === 'auto-detect') {
-      languageInstruction = "You MUST detect the language of the user's LATEST message ('New Customer Message') and respond in that same language, regardless of the language used in the 'Conversation History'.";
+      languageInstruction = "You MUST detect the language of the user's LATEST message ('New Customer Message') and respond ONLY in that same language.";
     }
 
     const {output} = await prompt({
