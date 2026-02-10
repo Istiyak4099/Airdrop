@@ -38,18 +38,11 @@ export default function DashboardLayout({
                 <Inbox className="h-4 w-4" />
                 Inbox
               </Link>
-               <Link
-                href="/configure-ai"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <SlidersHorizontal className="h-4 w-4" />
-                Configure AI
-              </Link>
               <Link
                 href="/settings"
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
               >
-                <Settings className="h-4 w-4" />
+                <SlidersHorizontal className="h-4 w-4" />
                 Settings
               </Link>
             </nav>
@@ -70,8 +63,8 @@ export default function DashboardLayout({
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="flex flex-col">
-              <SheetHeader className="sr-only">
-                  <SheetTitle>Navigation Menu</SheetTitle>
+              <SheetHeader>
+                  <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
               </SheetHeader>
               <nav className="grid gap-2 text-lg font-medium">
                 <Link
@@ -96,17 +89,10 @@ export default function DashboardLayout({
                   Inbox
                 </Link>
                 <Link
-                  href="/configure-ai"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
-                  <SlidersHorizontal className="h-5 w-5" />
-                  Configure AI
-                </Link>
-                <Link
                   href="/settings"
                   className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
                 >
-                  <Settings className="h-5 w-5" />
+                  <SlidersHorizontal className="h-5 w-5" />
                   Settings
                 </Link>
               </nav>
