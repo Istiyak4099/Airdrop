@@ -27,8 +27,15 @@ Invent two passwords (tokens) and set them in your **Firebase Console > App Host
 4. Click **Verify and save**.
 5. **CRITICAL**: Click **Manage** and **Subscribe** to the `messages` field.
 
-### 3. Store Page Access Token (Final Link)
-After verification, generate a **Page Access Token** in the Meta Dashboard. Then, use the command below to link it to your app account:
+### 3. Connect Your Page
+You can now connect your page directly through the App Dashboard!
+
+**Where to find your Page ID?**
+- **Method A**: Go to your Facebook Page > **About** > Scroll to bottom > **Page ID**.
+- **Method B**: In Meta Developer Portal > **Messenger** > **API Setup**. It is listed next to your Page name.
+
+### 4. Manual Setup (Alternative)
+If you prefer using the command line, use the command below:
 
 ```bash
 # Replace <...> with your actual values. 
@@ -44,5 +51,5 @@ curl -X POST https://www.rareflex.store/api/admin/facebook/page-token \
   }'
 ```
 
-### 4. Test it!
+### 5. Test it!
 Send a message to your Facebook Page. The AI will respond automatically using your configured business profile settings.

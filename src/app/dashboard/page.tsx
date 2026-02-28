@@ -14,6 +14,7 @@ import {
   MessageCircle,
   Copy,
   Plus,
+  HelpCircle,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -38,6 +39,7 @@ import { Label } from "@/components/ui/label"
 import { useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase"
 import { collection, query, where, doc, setDoc, serverTimestamp } from "firebase/firestore"
 import { useToast } from "@/hooks/use-toast"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 export default function Dashboard() {
   const { user } = useUser();
@@ -141,10 +143,22 @@ export default function Dashboard() {
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="page-id">Page ID</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="page-id">Page ID</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-[200px]">
+                          <p>Find this in your Facebook Page "About" section or the Meta Developer Portal.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                   <Input 
                     id="page-id" 
-                    placeholder="1234567890" 
+                    placeholder="e.g. 1029384756" 
                     value={pageId}
                     onChange={(e) => setPageId(e.target.value)}
                   />
