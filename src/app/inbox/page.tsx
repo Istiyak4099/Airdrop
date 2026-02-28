@@ -2,10 +2,7 @@
 "use client";
 
 import { useState } from "react"
-import { Search, Send, Paperclip } from "lucide-react"
-import {
-  Card,
-} from "@/components/ui/card"
+import { Search, Send, Paperclip, MessageSquare } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
