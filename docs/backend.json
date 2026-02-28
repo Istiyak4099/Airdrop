@@ -1,0 +1,665 @@
+{
+  "entities": {
+    "UserAccount": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserAccount",
+      "type": "object",
+      "description": "Represents a business or individual user of the Aether Assistant platform, managing their subscription and overall application settings.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the UserAccount entity."
+        },
+        "businessName": {
+          "type": "string",
+          "description": "The registered name of the business or organization using the platform."
+        },
+        "contactEmail": {
+          "type": "string",
+          "description": "The primary contact email for the user account. (Relationship: UserAccount 1:N SocialMediaIntegration)",
+          "format": "email"
+        },
+        "subscriptionPlanId": {
+          "type": "string",
+          "description": "Reference to the SubscriptionPlan currently active for this user account. (Relationship: SubscriptionPlan 1:N UserAccount)"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the user account was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the user account was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "businessName",
+        "contactEmail",
+        "subscriptionPlanId",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "SubscriptionPlan": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "SubscriptionPlan",
+      "type": "object",
+      "description": "Defines the different pricing tiers and feature sets available to UserAccounts.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the SubscriptionPlan entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the subscription plan (e.g., 'Starter', 'Pro', 'Enterprise')."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief description of what the plan offers."
+        },
+        "monthlyPrice": {
+          "type": "number",
+          "description": "The monthly cost of the subscription plan."
+        },
+        "yearlyPrice": {
+          "type": "number",
+          "description": "The yearly cost of the subscription plan, if applicable."
+        },
+        "features": {
+          "type": "array",
+          "description": "A list of features included in this plan.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "maxSocialIntegrations": {
+          "type": "number",
+          "description": "The maximum number of social media accounts that can be integrated with this plan."
+        },
+        "maxAiConversationsPerMonth": {
+          "type": "number",
+          "description": "The maximum number of AI-handled conversations allowed per month for this plan."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the subscription plan was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the subscription plan was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "monthlyPrice",
+        "features",
+        "maxSocialIntegrations",
+        "maxAiConversationsPerMonth",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "SocialMediaIntegration": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "SocialMediaIntegration",
+      "type": "object",
+      "description": "Stores the necessary credentials and configuration for a UserAccount to connect to a specific social media platform, such as Facebook or Instagram via the Meta Graph API.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the SocialMediaIntegration entity."
+        },
+        "userAccountId": {
+          "type": "string",
+          "description": "Reference to the UserAccount that owns this integration. (Relationship: UserAccount 1:N SocialMediaIntegration)"
+        },
+        "platform": {
+          "type": "string",
+          "description": "The name of the social media platform (e.g., 'Facebook', 'Instagram')."
+        },
+        "platformPageId": {
+          "type": "string",
+          "description": "The unique identifier for the specific page or business account on the social media platform (e.g., Facebook Page ID, Instagram Business Account ID)."
+        },
+        "platformPageName": {
+          "type": "string",
+          "description": "The display name of the integrated social media page or account."
+        },
+        "accessToken": {
+          "type": "string",
+          "description": "The access token required to interact with the social media platform's API (e.g., Meta Graph API). This token should be securely stored (e.g., encrypted at rest)."
+        },
+        "accessTokenExpiresAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the access token expires, requiring re-authentication.",
+          "format": "date-time"
+        },
+        "refreshToken": {
+          "type": "string",
+          "description": "An optional refresh token used to obtain new access tokens without requiring re-authentication. This token should also be securely stored."
+        },
+        "isActive": {
+          "type": "boolean",
+          "description": "Indicates whether this social media integration is currently active and operational."
+        },
+        "status": {
+          "type": "string",
+          "description": "The current connection status of the integration (e.g., 'connected', 'disconnected', 'reauthentication_required')."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the integration was first established.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the integration details were last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userAccountId",
+        "platform",
+        "platformPageId",
+        "platformPageName",
+        "accessToken",
+        "accessTokenExpiresAt",
+        "isActive",
+        "status",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AgentProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "AgentProfile",
+      "type": "object",
+      "description": "Configures the specific behavior, tone, and instructions for an AI agent instance managed by a UserAccount.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the AgentProfile entity."
+        },
+        "userAccountId": {
+          "type": "string",
+          "description": "Reference to the UserAccount that owns this agent profile. (Relationship: UserAccount 1:N AgentProfile)"
+        },
+        "name": {
+          "type": "string",
+          "description": "A user-defined name for the agent profile (e.g., 'Polite Customer Service Agent')."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief description of the agent's purpose or characteristics."
+        },
+        "tone": {
+          "type": "string",
+          "description": "The desired conversational tone for the AI (e.g., 'friendly', 'formal', 'empathetic', 'concise')."
+        },
+        "language": {
+          "type": "string",
+          "description": "The primary language the AI agent should use for responses (e.g., 'en-US', 'es-ES')."
+        },
+        "instructions": {
+          "type": "string",
+          "description": "Detailed instructions or a 'system prompt' guiding the AI's behavior and response generation."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the agent profile was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the agent profile was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userAccountId",
+        "name",
+        "tone",
+        "language",
+        "instructions",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Conversation": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Conversation",
+      "type": "object",
+      "description": "Represents a continuous thread of interaction between a customer and the AI agent on a specific social media platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Conversation entity."
+        },
+        "integrationId": {
+          "type": "string",
+          "description": "Reference to the SocialMediaIntegration through which this conversation is occurring. (Relationship: SocialMediaIntegration 1:N Conversation)"
+        },
+        "customerId": {
+          "type": "string",
+          "description": "The unique identifier of the customer on the social media platform."
+        },
+        "customerName": {
+          "type": "string",
+          "description": "The display name of the customer from the social media platform."
+        },
+        "customerProfileImageUrl": {
+          "type": "string",
+          "description": "URL to the customer's profile picture on the social media platform, if available.",
+          "format": "uri"
+        },
+        "firstMessageTimestamp": {
+          "type": "string",
+          "description": "Timestamp of the first message received in this conversation.",
+          "format": "date-time"
+        },
+        "lastMessageTimestamp": {
+          "type": "string",
+          "description": "Timestamp of the most recent message (customer or AI) in this conversation.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the conversation (e.g., 'open', 'closed', 'escalated', 'pending_ai_response')."
+        },
+        "isRead": {
+          "type": "boolean",
+          "description": "Indicates whether the conversation has been viewed by a user in the inbox interface."
+        },
+        "agentProfileId": {
+          "type": "string",
+          "description": "Reference to the AgentProfile used for AI responses in this conversation. (Relationship: AgentProfile 1:N Conversation)"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the conversation record was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the conversation record was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "integrationId",
+        "customerId",
+        "customerName",
+        "firstMessageTimestamp",
+        "lastMessageTimestamp",
+        "status",
+        "isRead",
+        "agentProfileId",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Message": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Message",
+      "type": "object",
+      "description": "Represents an individual message exchanged within a Conversation, either from a customer or an AI agent.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Message entity."
+        },
+        "conversationId": {
+          "type": "string",
+          "description": "Reference to the Conversation this message belongs to. (Relationship: Conversation 1:N Message)"
+        },
+        "platformMessageId": {
+          "type": "string",
+          "description": "The original unique identifier of the message from the social media platform, if available."
+        },
+        "senderType": {
+          "type": "string",
+          "description": "Indicates whether the sender was the 'customer' or 'ai'."
+        },
+        "content": {
+          "type": "string",
+          "description": "The actual text content of the message."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Timestamp when the message was sent or received.",
+          "format": "date-time"
+        },
+        "sentiment": {
+          "type": "string",
+          "description": "The detected sentiment of the message (e.g., 'positive', 'neutral', 'negative'), primarily for AI responses or analyzed customer messages."
+        },
+        "aiModelUsed": {
+          "type": "string",
+          "description": "The specific AI model used to generate this response, if the senderType is 'ai'."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the message record was created.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "conversationId",
+        "senderType",
+        "content",
+        "timestamp",
+        "createdAt"
+      ]
+    },
+    "QuickReply": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "QuickReply",
+      "type": "object",
+      "description": "Stores pre-defined quick reply suggestions that AI agents can use or suggest in conversations.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the QuickReply entity."
+        },
+        "agentProfileId": {
+          "type": "string",
+          "description": "Reference to the AgentProfile this quick reply belongs to. (Relationship: AgentProfile 1:N QuickReply)"
+        },
+        "text": {
+          "type": "string",
+          "description": "The text content of the quick reply suggestion."
+        },
+        "order": {
+          "type": "number",
+          "description": "An optional numerical value to specify the display order of quick replies."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the quick reply was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the quick reply was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "agentProfileId",
+        "text",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AnalyticsSummary": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "AnalyticsSummary",
+      "type": "object",
+      "description": "Aggregates and stores key performance indicators and statistics for a UserAccount over a specific time period, displayed on the User Dashboard.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the AnalyticsSummary entity."
+        },
+        "userAccountId": {
+          "type": "string",
+          "description": "Reference to the UserAccount these analytics belong to. (Relationship: UserAccount 1:N AnalyticsSummary)"
+        },
+        "datePeriod": {
+          "type": "string",
+          "description": "Describes the aggregation period (e.g., 'daily', 'weekly', 'monthly')."
+        },
+        "startDate": {
+          "type": "string",
+          "description": "The starting date and time of the analytics period.",
+          "format": "date-time"
+        },
+        "endDate": {
+          "type": "string",
+          "description": "The ending date and time of the analytics period.",
+          "format": "date-time"
+        },
+        "messagesHandled": {
+          "type": "number",
+          "description": "The total number of messages handled by AI agents during this period."
+        },
+        "averageResponseTimeSeconds": {
+          "type": "number",
+          "description": "The average time (in seconds) it took for AI agents to respond during this period."
+        },
+        "positiveSentimentCount": {
+          "type": "number",
+          "description": "The count of AI responses or customer messages identified with a positive sentiment."
+        },
+        "neutralSentimentCount": {
+          "type": "number",
+          "description": "The count of AI responses or customer messages identified with a neutral sentiment."
+        },
+        "negativeSentimentCount": {
+          "type": "number",
+          "description": "The count of AI responses or customer messages identified with a negative sentiment."
+        },
+        "integrationStatusBreakdown": {
+          "type": "string",
+          "description": "A JSON string or object detailing the status of various social media integrations during the period (e.g., {'facebook': 'connected', 'instagram': 'disconnected'})."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the analytics summary was generated.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the analytics summary was last updated or recalculated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userAccountId",
+        "datePeriod",
+        "startDate",
+        "endDate",
+        "messagesHandled",
+        "averageResponseTimeSeconds",
+        "positiveSentimentCount",
+        "neutralSentimentCount",
+        "negativeSentimentCount",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/userAccounts/{userAccountId}",
+        "definition": {
+          "entityName": "UserAccount",
+          "schema": {
+            "$ref": "#/backend/entities/UserAccount"
+          },
+          "description": "Stores individual user account details. The `userAccountId` in the path MUST match `request.auth.uid` and the document's `id` field. This structure establishes direct ownership.",
+          "params": [
+            {
+              "name": "userAccountId",
+              "description": "The unique identifier of the user account, matching `request.auth.uid`."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/subscriptionPlans/{subscriptionPlanId}",
+        "definition": {
+          "entityName": "SubscriptionPlan",
+          "schema": {
+            "$ref": "#/backend/entities/SubscriptionPlan"
+          },
+          "description": "Global collection for subscription plans. This data is generally public read-only for users and admin-writable.",
+          "params": [
+            {
+              "name": "subscriptionPlanId",
+              "description": "The unique identifier of the subscription plan."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/userAccounts/{userAccountId}/socialMediaIntegrations/{integrationId}",
+        "definition": {
+          "entityName": "SocialMediaIntegration",
+          "schema": {
+            "$ref": "#/backend/entities/SocialMediaIntegration"
+          },
+          "description": "Stores social media integration details for a specific user. The `userAccountId` field in the document MUST match the `userAccountId` in the path for authorization independence.",
+          "params": [
+            {
+              "name": "userAccountId",
+              "description": "The unique identifier of the owning user account."
+            },
+            {
+              "name": "integrationId",
+              "description": "The unique identifier of the social media integration."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/userAccounts/{userAccountId}/agentProfiles/{agentProfileId}",
+        "definition": {
+          "entityName": "AgentProfile",
+          "schema": {
+            "$ref": "#/backend/entities/AgentProfile"
+          },
+          "description": "Configures AI agent profiles for a specific user. The `userAccountId` field in the document MUST match the `userAccountId` in the path for authorization independence.",
+          "params": [
+            {
+              "name": "userAccountId",
+              "description": "The unique identifier of the owning user account."
+            },
+            {
+              "name": "agentProfileId",
+              "description": "The unique identifier of the agent profile."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/userAccounts/{userAccountId}/socialMediaIntegrations/{integrationId}/conversations/{conversationId}",
+        "definition": {
+          "entityName": "Conversation",
+          "schema": {
+            "$ref": "#/backend/entities/Conversation"
+          },
+          "description": "Represents conversation threads tied to a specific social media integration. The `userAccountId` field in the document is denormalized from the parent path for authorization independence, and MUST match the `userAccountId` in the path. The `integrationId` field in the document MUST also match the `integrationId` in the path.",
+          "params": [
+            {
+              "name": "userAccountId",
+              "description": "The unique identifier of the owning user account."
+            },
+            {
+              "name": "integrationId",
+              "description": "The unique identifier of the parent social media integration."
+            },
+            {
+              "name": "conversationId",
+              "description": "The unique identifier of the conversation."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/userAccounts/{userAccountId}/socialMediaIntegrations/{integrationId}/conversations/{conversationId}/messages/{messageId}",
+        "definition": {
+          "entityName": "Message",
+          "schema": {
+            "$ref": "#/backend/entities/Message"
+          },
+          "description": "Stores individual messages within a conversation. The `userAccountId` field in the document is denormalized from the top-level path for authorization independence, and MUST match the `userAccountId` in the path. The `conversationId` field in the document MUST match the `conversationId` in the path.",
+          "params": [
+            {
+              "name": "userAccountId",
+              "description": "The unique identifier of the owning user account."
+            },
+            {
+              "name": "integrationId",
+              "description": "The unique identifier of the parent social media integration."
+            },
+            {
+              "name": "conversationId",
+              "description": "The unique identifier of the parent conversation."
+            },
+            {
+              "name": "messageId",
+              "description": "The unique identifier of the message."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/userAccounts/{userAccountId}/agentProfiles/{agentProfileId}/quickReplies/{quickReplyId}",
+        "definition": {
+          "entityName": "QuickReply",
+          "schema": {
+            "$ref": "#/backend/entities/QuickReply"
+          },
+          "description": "Stores quick reply suggestions for a specific agent profile. The `userAccountId` field in the document is denormalized from the top-level path for authorization independence, and MUST match the `userAccountId` in the path. The `agentProfileId` field in the document MUST match the `agentProfileId` in the path.",
+          "params": [
+            {
+              "name": "userAccountId",
+              "description": "The unique identifier of the owning user account."
+            },
+            {
+              "name": "agentProfileId",
+              "description": "The unique identifier of the parent agent profile."
+            },
+            {
+              "name": "quickReplyId",
+              "description": "The unique identifier of the quick reply."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/userAccounts/{userAccountId}/analyticsSummaries/{analyticsSummaryId}",
+        "definition": {
+          "entityName": "AnalyticsSummary",
+          "schema": {
+            "$ref": "#/backend/entities/AnalyticsSummary"
+          },
+          "description": "Aggregates analytics data for a specific user account. The `userAccountId` field in the document MUST match the `userAccountId` in the path for authorization independence.",
+          "params": [
+            {
+              "name": "userAccountId",
+              "description": "The unique identifier of the owning user account."
+            },
+            {
+              "name": "analyticsSummaryId",
+              "description": "The unique identifier for the analytics summary record."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure is designed to adhere strictly to the core design principles and strategy mandates, prioritizing authorization independence, clarity, and scalability. The primary strategy revolves around a hierarchical path structure for user-owned data, combined with strategic denormalization of authorization context to eliminate security rule dependencies on parent documents (`get()` calls).  User-specific data is rooted under `/userAccounts/{userAccountId}`. This path directly maps to the authenticated user's ID (`request.auth.uid`), ensuring that each user has a clearly delineated and private data space.\n\n**Authorization Independence:** This is achieved by including the `userAccountId` field directly within every document that belongs to a user, even when it's nested deep within subcollections. For example, a `Message` document located at `/userAccounts/{userAccountId}/socialMediaIntegrations/{integrationId}/conversations/{conversationId}/messages/{messageId}` will contain its own `userAccountId` field. This allows security rules to evaluate `request.auth.uid == resource.data.userAccountId` directly on the `Message` document itself, without needing to `get()` the parent `Conversation`, `SocialMediaIntegration`, or `UserAccount` documents. This approach simplifies rule writing, improves performance for batched operations and transactions, and makes debugging more straightforward as each document carries its full authorization context.\n\n**Support for QAPs (Queryable Authorization Patterns):**\n1.  **Path-Based Ownership:** For `UserAccount`, `SocialMediaIntegration`, `AgentProfile`, `AnalyticsSummary`, `QuickReply`, `Conversation`, and `Message`, the data is stored under `/userAccounts/{userAccountId}/...`. This structure inherently filters `list` operations by the `userAccountId` in the path. For instance, a query to `/userAccounts/{request.auth.uid}/socialMediaIntegrations` will only return integrations belonging to the authenticated user. The security rules will then verify `request.auth.uid == userAccountId` (from the path wildcard) and `request.auth.uid == resource.data.userAccountId` (from the document's denormalized field), ensuring that rules are not acting as filters and that only authorized data is returned. This satisfies QAPs, as the read operation is implicitly constrained by the path, and explicit data ownership further validates the request.\n2.  **Structural Segregation:** The `SubscriptionPlan` collection is segregated as a global, read-only (for users) collection, managed by administrators, simplifying its security posture. All other collections are specific to a `UserAccount`, ensuring homogeneous security requirements within their respective paths.\n\n**DBAC:** Ownership is enforced through `request.auth.uid` matching the `userAccountId` in the document and path. No custom claims are used for roles; if global roles were needed (e.g., 'admin'), a separate collection like `/roles_admin/{uid}` would be used (though not present in the current entities).\n\n**Invariants:** Timestamps (`createdAt`, `updatedAt`) are included in entities. Ownership is strongly enforced through the path structure and denormalized `userAccountId` fields. The explicit `status` field in entities like `SocialMediaIntegration` and `Conversation` provides clear state modeling."
+  }
+}
