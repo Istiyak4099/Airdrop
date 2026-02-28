@@ -7,19 +7,20 @@ Airdrop automates your customer messaging on Facebook, responding instantly usin
 
 To connect your Facebook Page, follow these steps:
 
-### 1. Configure Environment Variables
-Add the following to your `.env` file (and your deployment secrets):
-- `FACEBOOK_APP_SECRET`: Found in your Meta App Dashboard under **App settings > Basic**.
-- `FACEBOOK_VERIFY_TOKEN`: Any secret string you choose (e.g., `airdrop_verify_2024`). **This is what you paste into the "Verify token" field in your screenshot.**
-- `ADMIN_API_KEY`: Any secret string you choose (used to authorize your internal token setup).
+### 1. Configure Secret Tokens
+You need to "invent" two secret passwords (tokens) for your app. Open your `.env` file and set these:
+- `FACEBOOK_VERIFY_TOKEN`: Invent any random string (e.g., `airdrop_verify_2024`). **This is what you paste into the "Verify token" field in the Meta Dashboard.**
+- `ADMIN_API_KEY`: Invent any random string (e.g., `my_admin_setup_key`). You'll use this once to authorize your token setup.
 
-### 2. Set Up Meta Webhook (As seen in your screenshot)
+Also, get your `FACEBOOK_APP_SECRET` from the Meta App Dashboard under **App settings > Basic**.
+
+### 2. Set Up Meta Webhook
 1. Go to your [Meta App Dashboard](https://developers.facebook.com/).
 2. Click on **Use cases** in the left sidebar.
 3. Find **Messenger** and click **Edit** or **Customize**.
-4. Find the **Configure webhooks** section (as shown in your screenshot).
-5. **Callback URL**: `https://<your-domain>/api/facebook/webhook`
-6. **Verify Token**: Use the same string you set for `FACEBOOK_VERIFY_TOKEN`.
+4. Find the **Configure webhooks** section.
+5. **Callback URL**: `https://<your-domain>/api/facebook/webhook` (Replace `<your-domain>` with your actual live URL).
+6. **Verify Token**: Use the **exact same string** you invented for `FACEBOOK_VERIFY_TOKEN` in step 1.
 7. Click **Verify and save**.
 8. **IMPORTANT**: After verification, find the **Webhooks** management section on that same page and click **Manage**. Check the box for **`messages`** to subscribe to incoming messages.
 
