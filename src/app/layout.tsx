@@ -3,6 +3,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { Roboto } from 'next/font/google';
 import { AuthProvider } from '@/hooks/use-auth';
 import { ProtectedRoute } from '@/components/auth/protected-route';
+import { FirebaseClientProvider } from '@/firebase';
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -23,12 +24,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`font-sans antialiased ${roboto.variable}`}>
-        <AuthProvider>
-            <ProtectedRoute>
-                {children}
-            </ProtectedRoute>
-        </AuthProvider>
-        <Toaster />
+        <FirebaseClientProvider>
+          <AuthProvider>
+              <ProtectedRoute>
+                  {children}
+              </ProtectedRoute>
+          </AuthProvider>
+          <Toaster />
+        </FirebaseClientProvider>
       </body>
     </html>
   )

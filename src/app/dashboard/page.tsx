@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link"
@@ -22,12 +21,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { useAuth, useFirestore, useCollection, useMemoFirebase } from "@/firebase"
+import { useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase"
 import { collection, query, where } from "firebase/firestore"
 import { useToast } from "@/hooks/use-toast"
 
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
 
