@@ -13,10 +13,18 @@ export async function GET(req: NextRequest) {
 
   const verifyToken = process.env.FACEBOOK_VERIFY_TOKEN;
 
+  // Logging for debugging verification issues in hosting logs
   if (mode === 'subscribe' && token === verifyToken) {
+    console.log('Webhook Verified Successfully');
+    // Meta expects the challenge to be returned as a raw string
     return new Response(challenge, { status: 200 });
   } else {
-    return NextResponse.json({ error: 'Verification failed' }, { status: 403 });
+    console.error('Webhook Verification Failed', { 
+      receivedToken: token, 
+      expectedToken: verifyToken,
+      mode: mode 
+    });
+    return new Response('Verification failed', { status: 403 });
   }
 }
 
@@ -29,10 +37,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
   }
 
-  // Respond 200 immediately to Meta
+  // Respond 200 immediately to Meta to avoid timeouts/retries
   const response = NextResponse.json({ success: true }, { status: 200 });
 
-  // Process async
+  // Process message logic asynchronously
   (async () => {
     try {
       const body = JSON.parse(rawBody);
@@ -41,7 +49,7 @@ export async function POST(req: NextRequest) {
       for (const entry of body.entry) {
         const pageId = entry.id;
         
-        // Load Page Credentials
+        // Load Page Credentials from root collection for speed
         const pageDoc = await getDoc(doc(firestore, 'facebook_pages', pageId));
         if (!pageDoc.exists()) continue;
 
@@ -51,11 +59,12 @@ export async function POST(req: NextRequest) {
           const senderId = messagingEvent.sender.id;
           const message = messagingEvent.message;
 
+          // Ignore echoes and non-text messages
           if (!message || message.is_echo || !message.text) continue;
 
           const userMessageText = message.text;
 
-          // 1. Find or Create Conversation
+          // 1. Find or Create Conversation in User's sub-collection
           const convoId = `${pageId}_${senderId}`;
           const convoRef = doc(firestore, 'userAccounts', userAccountId, 'conversations', convoId);
           const convoSnap = await getDoc(convoRef);
@@ -80,7 +89,7 @@ export async function POST(req: NextRequest) {
             userAccountId,
           });
 
-          // 3. Fetch History for Context
+          // 3. Fetch History for Context (last 10 messages)
           const messagesQuery = query(
             collection(convoRef, 'messages'),
             orderBy('timestamp', 'desc'),
@@ -94,16 +103,16 @@ export async function POST(req: NextRequest) {
             }))
             .reverse();
 
-          // 4. Generate AI Response
+          // 4. Generate AI Response using your existing flow
           const { welcomeMessage } = await generateWelcomeMessage({
-            customerName: 'Customer', // Can be refined by fetching PSID profile
+            customerName: 'Customer', 
             socialMediaPlatform: 'Facebook',
             userMessage: userMessageText,
             userId: userAccountId,
-            chatHistory: chatHistory.slice(0, -1), // Don't include the current message twice
+            chatHistory: chatHistory.slice(0, -1), // Exclude the message we just saved to avoid duplication in prompt
           });
 
-          // 5. Send to Facebook
+          // 5. Send reply via Meta Graph API
           await sendFacebookMessage(pageAccessToken, senderId, welcomeMessage);
 
           // 6. Save AI Response to Firestore
@@ -115,7 +124,7 @@ export async function POST(req: NextRequest) {
             userAccountId,
           });
 
-          // 7. Update Convo timestamp
+          // 7. Update Conversation last activity timestamp
           await setDoc(convoRef, { lastMessageTimestamp: serverTimestamp() }, { merge: true });
         }
       }
