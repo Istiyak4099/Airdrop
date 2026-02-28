@@ -5,45 +5,41 @@ Airdrop automates your customer messaging on Facebook, responding instantly usin
 
 ## Facebook Integration Setup
 
-To connect your Facebook Page, follow these steps exactly:
+Follow these steps to connect your Facebook Page to the AI:
 
 ### 1. Configure Secret Tokens
-You need to "invent" two secret passwords (tokens) for your app. 
+Invent two passwords (tokens) and set them in your **Firebase Console > App Hosting > [Your Backend] > Settings > Environment Variables**:
 
-**IMPORTANT**: These must be set in your **Firebase App Hosting Environment Variables** (in the Firebase Console) for the live site to work.
+- `FACEBOOK_VERIFY_TOKEN`: Invent any string (e.g., `airdrop_verify_2026`).
+- `ADMIN_API_KEY`: Invent any string (e.g., `my_admin_key_99`).
+- `FACEBOOK_APP_SECRET`: Copy this from **Meta App Dashboard > App settings > Basic**.
 
-- `FACEBOOK_VERIFY_TOKEN`: Invent any random string (e.g., `airdrop_verify_2026`). **This is what you paste into the "Verify token" field in the Meta Dashboard.**
-- `ADMIN_API_KEY`: Invent any random string (e.g., `my_admin_setup_key_99`). You'll use this to authorize your token setup.
-- `FACEBOOK_APP_SECRET`: Get this from Meta App Dashboard under **App settings > Basic**.
+**Redeploy** the app after changing variables.
 
 ### 2. Set Up Meta Webhook
 1. Go to your [Meta App Dashboard](https://developers.facebook.com/).
-2. Click on **Use cases** -> **Messenger** -> **Edit** or **Customize**.
-3. Find **Configure webhooks**.
-4. **Callback URL**: `https://www.rareflex.store/api/facebook/webhook`
-5. **Verify Token**: Use the **exact same string** you set for `FACEBOOK_VERIFY_TOKEN` (e.g., `airdrop_verify_2026`).
-6. Click **Verify and save**.
+2. Navigate to **Use cases** -> **Messenger** -> **Edit**.
+3. Under **Configure webhooks**, click **Configure**:
+   - **Callback URL**: `https://www.rareflex.store/api/facebook/webhook`
+   - **Verify Token**: Enter your `FACEBOOK_VERIFY_TOKEN`.
+4. Click **Verify and save**.
+5. **CRITICAL**: Click **Manage** and **Subscribe** to the `messages` field.
 
-#### Troubleshooting Verification
-If Meta says it "couldn't be validated":
-- Ensure your latest code is fully deployed to `www.rareflex.store`.
-- Go to **Firebase Console > App Hosting > [Your Backend] > Settings > Environment Variables**.
-- Add `FACEBOOK_VERIFY_TOKEN` with your chosen value and `FACEBOOK_APP_SECRET`.
-- **Redeploy** the app after changing environment variables to ensure they take effect.
-
-### 3. Store Page Access Token
-After the webhook is verified, generate a **Page Access Token** in the Meta Dashboard. Then, send it to your app's admin endpoint to store it securely:
+### 3. Store Page Access Token (Final Link)
+After verification, generate a **Page Access Token** in the Meta Dashboard. Then, use the command below to link it to your app account:
 
 ```bash
+# Replace <...> with your actual values
 curl -X POST https://www.rareflex.store/api/admin/facebook/page-token \
   -H "X-Admin-Key: <your_ADMIN_API_KEY>" \
   -H "Content-Type: application/json" \
   -d '{
-    "pageId": "your_facebook_page_id",
-    "pageAccessToken": "your_generated_page_access_token",
-    "pageName": "Your Page Name",
-    "userAccountId": "your_firebase_user_uid"
+    "pageId": "<your_facebook_page_id>",
+    "pageAccessToken": "<your_page_access_token>",
+    "pageName": "My Page Name",
+    "userAccountId": "<your_user_uid_from_dashboard>"
   }'
 ```
 
-The AI will now automatically reply to messages sent to that Facebook Page!
+### 4. Test it!
+Send a message to your Facebook Page. The AI will respond automatically using your configured business profile settings.
