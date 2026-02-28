@@ -9,21 +9,21 @@ To connect your Facebook Page, follow these steps:
 
 ### 1. Configure Environment Variables
 Add the following to your `.env` file (and your deployment secrets):
-- `FACEBOOK_APP_SECRET`: Found in your Meta App Dashboard under Settings > Basic.
-- `FACEBOOK_VERIFY_TOKEN`: Any secret string you choose.
-- `ADMIN_API_KEY`: Any secret string you choose.
+- `FACEBOOK_APP_SECRET`: Found in your Meta App Dashboard under **App settings > Basic**.
+- `FACEBOOK_VERIFY_TOKEN`: Any secret string you choose (e.g., `my_secret_verify_token`).
+- `ADMIN_API_KEY`: Any secret string you choose (used to authorize your internal token setup).
 
 ### 2. Set Up Meta Webhook
 1. Go to your [Meta App Dashboard](https://developers.facebook.com/).
-2. Add the **Messenger** product.
-3. Go to **Messenger > Settings**.
-4. In the **Webhooks** section, click **Configure**.
+2. Click on **Use cases** in the left sidebar.
+3. Find **Messenger** and click **Edit** or **Customize**. (If not present, click **Add Product** in the sidebar first and select Messenger).
+4. Scroll down to the **Webhooks** section and click **Configure**.
 5. **Callback URL**: `https://<your-domain>/api/facebook/webhook`
 6. **Verify Token**: Use the same string you set for `FACEBOOK_VERIFY_TOKEN`.
-7. Once verified, subscribe to the `messages` field.
+7. Once verified, click **Manage** in the Webhooks section and subscribe to the `messages` field.
 
 ### 3. Store Page Access Token
-Generate a **Page Access Token** in the Meta Dashboard (Messenger > Settings > Token Generation). Then, send it to your app's admin endpoint to store it securely in Firestore:
+Generate a **Page Access Token** in the Meta Dashboard (usually under Messenger > Settings > Token Generation). Then, send it to your app's admin endpoint to store it securely in Firestore:
 
 ```bash
 curl -X POST https://<your-domain>/api/admin/facebook/page-token \
