@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useTransition, useEffect } from 'react';
-import { Button } from "@/components/ui/button"
+import { useState, useTransition, useEffect, FormEvent } from 'react';
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -9,11 +9,11 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Building, Mic, List, Settings2, Bot, Send, ChevronDown, ChevronUp, Package, HelpCircle, PlusCircle, Trash2, RotateCcw, ArrowRight } from "lucide-react"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Building, Mic, List, Settings2, Bot, Send, ChevronDown, ChevronUp, Package, HelpCircle, PlusCircle, Trash2, RotateCcw, ArrowRight } from "lucide-react";
 import { Skeleton } from '@/components/ui/skeleton';
 import { generateWelcomeMessage } from '@/ai/flows/generate-welcome-message';
 import { useToast } from '@/hooks/use-toast';
@@ -26,11 +26,10 @@ import {
     saveAdvancedSettings, getAdvancedSettings, AdvancedSettings
 } from '@/services/business-profile-service';
 import { useAuth } from '@/hooks/use-auth';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ThreeStateSwitch } from '@/components/ui/three-state-switch';
 import { Checkbox } from '@/components/ui/checkbox';
-
 
 interface Message {
   id: number;
@@ -48,7 +47,7 @@ function AiResponsePreview() {
   ]);
   const [isPending, startTransition] = useTransition();
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = (e: FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
 
@@ -143,7 +142,6 @@ function AiResponsePreview() {
   )
 }
 
-
 export default function SettingsPage() {
     const { toast } = useToast();
     const { user, loading } = useAuth();
@@ -187,7 +185,6 @@ export default function SettingsPage() {
     const [sensitiveTopicsHandling, setSensitiveTopicsHandling] = useState('');
     const [complianceRequirements, setComplianceRequirements] = useState('');
     const [additionalKnowledge, setAdditionalKnowledge] = useState('');
-
 
     useEffect(() => {
         getBusinessBasics(effectiveUserId).then(data => {
@@ -268,7 +265,6 @@ export default function SettingsPage() {
     const saveBrandVoiceAction = () => saveBrandVoice({ brandVoice, writingStyleExample }, effectiveUserId);
     const saveResponseGuidelinesAction = () => saveResponseGuidelines({ languageHandling, preferredResponseLength, escalationProtocol, followUpQuestions, proactiveSuggestions, additionalResponseGuidelines }, effectiveUserId);
     const saveAdvancedSettingsAction = () => saveAdvancedSettings({ companyPolicies, sensitiveTopicsHandling, complianceRequirements, additionalKnowledge }, effectiveUserId);
-
 
     const addProduct = () => {
         setProducts(prev => [...prev, { id: Date.now(), name: '', price: '', description: '' }]);
@@ -435,7 +431,7 @@ export default function SettingsPage() {
                     </CardFooter>
                 </Card>
             </TabsContent>
-            {/* Other TabsContent remain the same, ensuring buttons use isSaving and no user check */}
+
             <TabsContent value="products-services">
                 <Card>
                     <CardHeader>
@@ -445,7 +441,7 @@ export default function SettingsPage() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        {products.map((product, index) => (
+                        {products.map((product) => (
                             <div key={product.id} className="p-4 border rounded-lg space-y-3">
                                 <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_2fr_auto] gap-4 items-center">
                                     <div className="space-y-1">
@@ -507,7 +503,7 @@ export default function SettingsPage() {
                     </CardFooter>
                 </Card>
             </TabsContent>
-            {/* (FAQs, Brand Voice, etc. continue with similar updates to isSaving and removing !user checks) */}
+
              <TabsContent value="faqs">
                  <Card>
                     <CardHeader>
@@ -568,6 +564,7 @@ export default function SettingsPage() {
                     </CardFooter>
                  </Card>
             </TabsContent>
+
             <TabsContent value="brand-voice">
                  <Card>
                     <CardHeader>
@@ -617,7 +614,7 @@ export default function SettingsPage() {
                             <Label htmlFor="writing-style">Writing Style Examples</Label>
                             <Textarea
                                 id="writing-style"
-                                placeholder="Provide examples of how you would like the AI to write, e.g., 'Use short, clear sentences. Always thank the customer for their question.'"
+                                placeholder="Provide examples of how you would like the AI to write..."
                                 value={writingStyleExample}
                                 onChange={(e) => setWritingStyleExample(e.target.value)}
                                 rows={4}
@@ -639,6 +636,7 @@ export default function SettingsPage() {
                     </CardFooter>
                  </Card>
             </TabsContent>
+
             <TabsContent value="response-guidelines">
                 <Card>
                     <CardHeader>
@@ -694,7 +692,7 @@ export default function SettingsPage() {
                                     onCheckedChange={(checked) => setFollowUpQuestions(Boolean(checked))}
                                 />
                                 <Label htmlFor="follow-up-questions" className="font-normal">
-                                    Have the AI ask follow-up questions to better understand customer needs
+                                    Have the AI ask follow-up questions
                                 </Label>
                             </div>
                         </div>
@@ -702,7 +700,7 @@ export default function SettingsPage() {
                             <Label htmlFor="additional-guidelines">Additional Response Guidelines</Label>
                             <Textarea
                                 id="additional-guidelines"
-                                placeholder="e.g., Do not make promises about future product features. Always use positive language."
+                                placeholder="e.g., Do not make promises about future product features."
                                 value={additionalResponseGuidelines}
                                 onChange={(e) => setAdditionalResponseGuidelines(e.target.value)}
                                 rows={4}
@@ -724,6 +722,7 @@ export default function SettingsPage() {
                     </CardFooter>
                 </Card>
             </TabsContent>
+
             <TabsContent value="advanced-settings">
                 <Card>
                     <CardHeader>
@@ -735,7 +734,7 @@ export default function SettingsPage() {
                             <Label htmlFor="company-policies">Company Policies</Label>
                             <Textarea
                                 id="company-policies"
-                                placeholder="e.g., Return policy, shipping information, privacy policy."
+                                placeholder="e.g., Return policy, shipping information."
                                 value={companyPolicies}
                                 onChange={(e) => setCompanyPolicies(e.target.value)}
                                 rows={4}
@@ -745,7 +744,7 @@ export default function SettingsPage() {
                             <Label htmlFor="sensitive-topics">Sensitive Topics Handling</Label>
                             <Textarea
                                 id="sensitive-topics"
-                                placeholder="e.g., How to respond to customer complaints, negative feedback, or emergencies."
+                                placeholder="e.g., How to respond to customer complaints."
                                 value={sensitiveTopicsHandling}
                                 onChange={(e) => setSensitiveTopicsHandling(e.target.value)}
                                 rows={4}
@@ -755,7 +754,7 @@ export default function SettingsPage() {
                             <Label htmlFor="additional-knowledge">Additional Knowledge</Label>
                             <Textarea
                                 id="additional-knowledge"
-                                placeholder="e.g., Specific terminology, jargon, or any other information the AI should know."
+                                placeholder="e.g., Specific terminology or jargon."
                                 value={additionalKnowledge}
                                 onChange={(e) => setAdditionalKnowledge(e.target.value)}
                                 rows={4}
