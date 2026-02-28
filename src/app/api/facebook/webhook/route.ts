@@ -1,7 +1,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { initializeFirebase } from '@/firebase';
-import { doc, getDoc, collection, query, where, orderBy, limit, getDocs, addDoc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, query, orderBy, limit, getDocs, addDoc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { verifyFacebookSignature, sendFacebookMessage } from '@/lib/facebook';
 import { generateWelcomeMessage } from '@/ai/flows/generate-welcome-message';
 
@@ -13,10 +13,8 @@ export async function GET(req: NextRequest) {
 
   const verifyToken = process.env.FACEBOOK_VERIFY_TOKEN;
 
-  // Logging for debugging verification issues in hosting logs
   if (mode === 'subscribe' && token === verifyToken) {
     console.log('Webhook Verified Successfully');
-    // Meta expects the challenge to be returned as a raw string
     return new Response(challenge, { status: 200 });
   } else {
     console.error('Webhook Verification Failed', { 
@@ -33,25 +31,35 @@ export async function POST(req: NextRequest) {
   const rawBody = await req.text();
   const appSecret = process.env.FACEBOOK_APP_SECRET;
 
-  if (!appSecret || !verifyFacebookSignature(rawBody, signature, appSecret)) {
+  console.log('Incoming Webhook POST request');
+
+  if (!appSecret) {
+    console.error('FACEBOOK_APP_SECRET is not set in environment variables');
+    return NextResponse.json({ error: 'Configuration error' }, { status: 500 });
+  }
+
+  if (!verifyFacebookSignature(rawBody, signature, appSecret)) {
+    console.error('Invalid Facebook Signature');
     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
   }
 
-  // Respond 200 immediately to Meta to avoid timeouts/retries
-  const response = NextResponse.json({ success: true }, { status: 200 });
-
-  // Process message logic asynchronously
-  (async () => {
+  // Process message logic asynchronously to avoid Meta timeouts
+  const body = JSON.parse(rawBody);
+  
+  // Create a separate promise to handle the logic
+  const processEvents = async () => {
     try {
-      const body = JSON.parse(rawBody);
       const { firestore } = initializeFirebase();
 
       for (const entry of body.entry) {
         const pageId = entry.id;
+        console.log(`Processing entry for Page ID: ${pageId}`);
         
-        // Load Page Credentials from root collection for speed
         const pageDoc = await getDoc(doc(firestore, 'facebook_pages', pageId));
-        if (!pageDoc.exists()) continue;
+        if (!pageDoc.exists()) {
+          console.warn(`No credentials found for Page ID: ${pageId}`);
+          continue;
+        }
 
         const { pageAccessToken, userAccountId } = pageDoc.data();
 
@@ -59,12 +67,14 @@ export async function POST(req: NextRequest) {
           const senderId = messagingEvent.sender.id;
           const message = messagingEvent.message;
 
-          // Ignore echoes and non-text messages
-          if (!message || message.is_echo || !message.text) continue;
+          if (!message || message.is_echo || !message.text) {
+            console.log('Skipping echo or non-text message');
+            continue;
+          }
 
           const userMessageText = message.text;
+          console.log(`Received message from ${senderId}: ${userMessageText}`);
 
-          // 1. Find or Create Conversation in User's sub-collection
           const convoId = `${pageId}_${senderId}`;
           const convoRef = doc(firestore, 'userAccounts', userAccountId, 'conversations', convoId);
           const convoSnap = await getDoc(convoRef);
@@ -80,7 +90,6 @@ export async function POST(req: NextRequest) {
             });
           }
 
-          // 2. Save User Message
           await addDoc(collection(convoRef, 'messages'), {
             conversationId: convoId,
             senderType: 'user',
@@ -89,7 +98,6 @@ export async function POST(req: NextRequest) {
             userAccountId,
           });
 
-          // 3. Fetch History for Context (last 10 messages)
           const messagesQuery = query(
             collection(convoRef, 'messages'),
             orderBy('timestamp', 'desc'),
@@ -103,19 +111,18 @@ export async function POST(req: NextRequest) {
             }))
             .reverse();
 
-          // 4. Generate AI Response using your existing flow
+          console.log('Generating AI response...');
           const { welcomeMessage } = await generateWelcomeMessage({
             customerName: 'Customer', 
             socialMediaPlatform: 'Facebook',
             userMessage: userMessageText,
             userId: userAccountId,
-            chatHistory: chatHistory.slice(0, -1), // Exclude the message we just saved to avoid duplication in prompt
+            chatHistory: chatHistory.slice(0, -1),
           });
 
-          // 5. Send reply via Meta Graph API
+          console.log(`Sending response to ${senderId}: ${welcomeMessage}`);
           await sendFacebookMessage(pageAccessToken, senderId, welcomeMessage);
 
-          // 6. Save AI Response to Firestore
           await addDoc(collection(convoRef, 'messages'), {
             conversationId: convoId,
             senderType: 'ai',
@@ -124,14 +131,17 @@ export async function POST(req: NextRequest) {
             userAccountId,
           });
 
-          // 7. Update Conversation last activity timestamp
           await setDoc(convoRef, { lastMessageTimestamp: serverTimestamp() }, { merge: true });
+          console.log('Webhook processing completed successfully for message');
         }
       }
     } catch (error) {
-      console.error('Webhook processing error:', error);
+      console.error('Detailed Webhook processing error:', error);
     }
-  })();
+  };
 
-  return response;
+  // Start processing but return 200 immediately
+  processEvents();
+
+  return NextResponse.json({ success: true }, { status: 200 });
 }

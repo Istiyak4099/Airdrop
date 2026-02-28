@@ -1,9 +1,6 @@
-'use client';
 
-import { db } from "@/lib/firebase";
+import { initializeFirebase } from "@/firebase";
 import { doc, getDoc, setDoc, Firestore } from "firebase/firestore";
-import { errorEmitter } from '@/firebase/error-emitter';
-import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
 
 // Interfaces for each data model
 export interface BusinessBasics {
@@ -55,43 +52,38 @@ export interface AdvancedSettings {
 }
 
 /**
- * Generic save function using the standard contextual error emitter.
+ * Shared Firestore instance logic for both client and server.
  */
-async function saveData<T>(collectionName: string, userId: string, data: T): Promise<void> {
-    const docRef = doc(db, collectionName, userId);
-    
-    // We initiate the write without awaiting internally to follow optimistic update patterns,
-    // but the wrapper is async for caller convenience.
-    setDoc(docRef, data, { merge: true })
-      .catch(async (serverError) => {
-        const permissionError = new FirestorePermissionError({
-          path: docRef.path,
-          operation: 'write',
-          requestResourceData: data,
-        } satisfies SecurityRuleContext);
-        errorEmitter.emit('permission-error', permissionError);
-      });
+function getDb() {
+    const { firestore } = initializeFirebase();
+    return firestore;
 }
 
 /**
- * Generic get function with contextual error handling.
+ * Generic save function.
+ */
+async function saveData<T>(collectionName: string, userId: string, data: T): Promise<void> {
+    const db = getDb();
+    const docRef = doc(db, collectionName, userId);
+    await setDoc(docRef, data, { merge: true });
+}
+
+/**
+ * Generic get function.
  */
 async function getData<T>(collectionName: string, userId: string): Promise<T | null> {
+    const db = getDb();
     const docRef = doc(db, collectionName, userId);
     try {
       const docSnap = await getDoc(docRef);
       return docSnap.exists() ? (docSnap.data() as T) : null;
     } catch (e: any) {
-      const permissionError = new FirestorePermissionError({
-        path: docRef.path,
-        operation: 'get',
-      } satisfies SecurityRuleContext);
-      errorEmitter.emit('permission-error', permissionError);
+      console.error(`Error fetching from ${collectionName}:`, e);
       return null;
     }
 }
 
-// Specific functions for each collection
+// Specific functions
 export async function saveBusinessBasics(data: BusinessBasics, userId: string): Promise<void> {
     await saveData('businessBasics', userId, data);
 }
