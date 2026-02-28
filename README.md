@@ -3,6 +3,8 @@
 
 Airdrop automates your customer messaging on Facebook, responding instantly using AI tailored to your business profile.
 
+**Note: Authentication is currently disabled for prototyping. All actions will default to a placeholder "anonymous-user" ID.**
+
 ## Facebook Integration Setup
 
 Follow these steps to connect your Facebook Page to the AI:
@@ -29,7 +31,8 @@ Invent two passwords (tokens) and set them in your **Firebase Console > App Host
 After verification, generate a **Page Access Token** in the Meta Dashboard. Then, use the command below to link it to your app account:
 
 ```bash
-# Replace <...> with your actual values
+# Replace <...> with your actual values. 
+# Use "anonymous-user" as the userAccountId since auth is disabled.
 curl -X POST https://www.rareflex.store/api/admin/facebook/page-token \
   -H "X-Admin-Key: <your_ADMIN_API_KEY>" \
   -H "Content-Type: application/json" \
@@ -37,7 +40,7 @@ curl -X POST https://www.rareflex.store/api/admin/facebook/page-token \
     "pageId": "<your_facebook_page_id>",
     "pageAccessToken": "<your_page_access_token>",
     "pageName": "My Page Name",
-    "userAccountId": "<your_user_uid_from_dashboard>"
+    "userAccountId": "anonymous-user"
   }'
 ```
 

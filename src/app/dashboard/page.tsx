@@ -30,42 +30,41 @@ export default function Dashboard() {
   const firestore = useFirestore();
   const { toast } = useToast();
 
+  // For prototyping without auth, we use a fallback ID
+  const effectiveUserId = user?.uid || "anonymous-user";
+
   // Fetch connected pages for this user
   const pagesQuery = useMemoFirebase(() => {
-    if (!firestore || !user) return null;
-    return query(collection(firestore, 'facebook_pages'), where('userAccountId', '==', user.uid));
-  }, [firestore, user]);
+    if (!firestore) return null;
+    return query(collection(firestore, 'facebook_pages'), where('userAccountId', '==', effectiveUserId));
+  }, [firestore, effectiveUserId]);
   const { data: connectedPages, isLoading: loadingPages } = useCollection(pagesQuery);
 
-  // Fetch conversations to count messages (simplified for MVP)
+  // Fetch conversations to count messages
   const convosQuery = useMemoFirebase(() => {
-    if (!firestore || !user) return null;
-    return query(collection(firestore, 'userAccounts', user.uid, 'conversations'));
-  }, [firestore, user]);
+    if (!firestore) return null;
+    return query(collection(firestore, 'userAccounts', effectiveUserId, 'conversations'));
+  }, [firestore, effectiveUserId]);
   const { data: conversations, isLoading: loadingConvos } = useCollection(convosQuery);
 
   const copyUid = () => {
-    if (user?.uid) {
-      navigator.clipboard.writeText(user.uid);
-      toast({
-        title: "Copied!",
-        description: "User ID copied to clipboard.",
-      });
-    }
+    navigator.clipboard.writeText(effectiveUserId);
+    toast({
+      title: "Copied!",
+      description: "User ID copied to clipboard.",
+    });
   };
 
   return (
     <>
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold md:text-2xl">Dashboard</h1>
-        {user && (
-          <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted p-2 rounded-md">
-            <span>Your ID: <code className="font-mono">{user.uid}</code></span>
-            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={copyUid}>
-              <Copy className="h-3 w-3" />
-            </Button>
-          </div>
-        )}
+        <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted p-2 rounded-md">
+          <span>Active User ID: <code className="font-mono">{effectiveUserId}</code></span>
+          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={copyUid}>
+            <Copy className="h-3 w-3" />
+          </Button>
+        </div>
       </div>
       
       <Card className="flex flex-col md:flex-row items-center justify-between p-6 bg-muted/40 border-0 shadow-none">
@@ -139,7 +138,7 @@ export default function Dashboard() {
           <CardContent>
             <div className="text-2xl font-bold">Free</div>
             <Button asChild variant="link" className="p-0 h-auto text-xs">
-                <Link href="/#pricing">View Usage Limits</Link>
+                <Link href="/dashboard">View Usage Limits</Link>
             </Button>
           </CardContent>
         </Card>
@@ -175,7 +174,7 @@ export default function Dashboard() {
                 <CardTitle className="text-xl mb-2">Plan Details</CardTitle>
                 <CardDescription className="mb-4">Explore features available in our Pro plans</CardDescription>
                 <Button asChild variant="secondary">
-                    <Link href="/#pricing">Learn More</Link>
+                    <Link href="/dashboard">Learn More</Link>
                 </Button>
             </Card>
         </div>
