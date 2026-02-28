@@ -1,8 +1,9 @@
-
-"use server";
+'use client';
 
 import { db } from "@/lib/firebase";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, Firestore } from "firebase/firestore";
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
 
 // Interfaces for each data model
 export interface BusinessBasics {
@@ -53,16 +54,41 @@ export interface AdvancedSettings {
     additionalKnowledge?: string;
 }
 
-// Generic save and get functions
+/**
+ * Generic save function using the standard contextual error emitter.
+ */
 async function saveData<T>(collectionName: string, userId: string, data: T): Promise<void> {
     const docRef = doc(db, collectionName, userId);
-    await setDoc(docRef, data, { merge: true });
+    
+    // We initiate the write without awaiting internally to follow optimistic update patterns,
+    // but the wrapper is async for caller convenience.
+    setDoc(docRef, data, { merge: true })
+      .catch(async (serverError) => {
+        const permissionError = new FirestorePermissionError({
+          path: docRef.path,
+          operation: 'write',
+          requestResourceData: data,
+        } satisfies SecurityRuleContext);
+        errorEmitter.emit('permission-error', permissionError);
+      });
 }
 
+/**
+ * Generic get function with contextual error handling.
+ */
 async function getData<T>(collectionName: string, userId: string): Promise<T | null> {
     const docRef = doc(db, collectionName, userId);
-    const docSnap = await getDoc(docRef);
-    return docSnap.exists() ? (docSnap.data() as T) : null;
+    try {
+      const docSnap = await getDoc(docRef);
+      return docSnap.exists() ? (docSnap.data() as T) : null;
+    } catch (e: any) {
+      const permissionError = new FirestorePermissionError({
+        path: docRef.path,
+        operation: 'get',
+      } satisfies SecurityRuleContext);
+      errorEmitter.emit('permission-error', permissionError);
+      return null;
+    }
 }
 
 // Specific functions for each collection
@@ -114,7 +140,9 @@ export async function getAdvancedSettings(userId: string): Promise<AdvancedSetti
     return await getData<AdvancedSettings>('advancedSettings', userId);
 }
 
-
+/**
+ * Aggregates all profile parts into a single object.
+ */
 export async function getBusinessProfile(userId: string): Promise<any | null> {
     const collections = ['businessBasics', 'products', 'faqs', 'brandVoice', 'responseGuidelines', 'advancedSettings'];
     const promises = collections.map(col => getData(col, userId));

@@ -38,9 +38,8 @@ service cloud.firestore {
      */
     match /facebook_pages/{pageId} {
       allow get: if true; 
-      allow list: if isSignedIn() || true; 
-      allow create: if isOwner(request.resource.data.userAccountId);
-      allow update, delete: if isExistingOwner(resource.data.userAccountId);
+      allow list: if true; // Permissive for prototyping
+      allow create, update, delete: if true; // Permissive for prototyping
     }
 
     /**
@@ -76,11 +75,11 @@ service cloud.firestore {
     }
 
     /**
-     * @description Rules for business profile settings stored as root collections with userId as docId.
+     * @description Rules for business profile settings.
+     * During prototyping with "auth disabled", we allow access to these collections.
      */
     match /{collectionName}/{userId} {
-      allow read, write: if (collectionName in ['businessBasics', 'products', 'faqs', 'brandVoice', 'responseGuidelines', 'advancedSettings']) 
-                         && isOwner(userId);
+      allow read, write: if (collectionName in ['businessBasics', 'products', 'faqs', 'brandVoice', 'responseGuidelines', 'advancedSettings']);
     }
 
     /**
