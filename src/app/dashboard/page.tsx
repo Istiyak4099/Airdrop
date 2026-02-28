@@ -1,5 +1,7 @@
+
 "use client";
 
+import { useState } from "react"
 import Link from "next/link"
 import {
   ArrowUpRight,
@@ -11,6 +13,7 @@ import {
   CreditCard,
   MessageCircle,
   Copy,
+  Plus,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -21,26 +24,41 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase"
-import { collection, query, where } from "firebase/firestore"
+import { collection, query, where, doc, setDoc, serverTimestamp } from "firebase/firestore"
 import { useToast } from "@/hooks/use-toast"
 
 export default function Dashboard() {
   const { user } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
+  const [isConnectOpen, setIsConnectOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // For prototyping without auth, we use a fallback ID
+  // Form state
+  const [pageId, setPageId] = useState("");
+  const [pageName, setPageName] = useState("");
+  const [pageToken, setPageToken] = useState("");
+
   const effectiveUserId = user?.uid || "anonymous-user";
 
-  // Fetch connected pages for this user
   const pagesQuery = useMemoFirebase(() => {
     if (!firestore) return null;
     return query(collection(firestore, 'facebook_pages'), where('userAccountId', '==', effectiveUserId));
   }, [firestore, effectiveUserId]);
   const { data: connectedPages, isLoading: loadingPages } = useCollection(pagesQuery);
 
-  // Fetch conversations to count messages
   const convosQuery = useMemoFirebase(() => {
     if (!firestore) return null;
     return query(collection(firestore, 'userAccounts', effectiveUserId, 'conversations'));
@@ -55,15 +73,109 @@ export default function Dashboard() {
     });
   };
 
+  const handleConnectPage = async () => {
+    if (!pageId || !pageToken || !firestore) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const pageRef = doc(firestore, 'facebook_pages', pageId);
+      await setDoc(pageRef, {
+        pageId,
+        pageName: pageName || "Unnamed Page",
+        pageAccessToken: pageToken,
+        userAccountId: effectiveUserId,
+        updatedAt: serverTimestamp(),
+      });
+
+      toast({
+        title: "Success!",
+        description: "Your Facebook Page has been connected.",
+      });
+      setIsConnectOpen(false);
+      setPageId("");
+      setPageName("");
+      setPageToken("");
+    } catch (error: any) {
+      toast({
+        title: "Connection Failed",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <>
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold md:text-2xl">Dashboard</h1>
-        <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted p-2 rounded-md">
-          <span>Active User ID: <code className="font-mono">{effectiveUserId}</code></span>
-          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={copyUid}>
-            <Copy className="h-3 w-3" />
-          </Button>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted p-2 rounded-md">
+            <span>Active User ID: <code className="font-mono">{effectiveUserId}</code></span>
+            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={copyUid}>
+              <Copy className="h-3 w-3" />
+            </Button>
+          </div>
+          
+          <Dialog open={isConnectOpen} onOpenChange={setIsConnectOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                Connect Page
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Connect Facebook Page</DialogTitle>
+                <DialogDescription>
+                  Enter your Page details from the Meta Developer Portal.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="page-id">Page ID</Label>
+                  <Input 
+                    id="page-id" 
+                    placeholder="1234567890" 
+                    value={pageId}
+                    onChange={(e) => setPageId(e.target.value)}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="page-name">Page Name</Label>
+                  <Input 
+                    id="page-name" 
+                    placeholder="My Business Page" 
+                    value={pageName}
+                    onChange={(e) => setPageName(e.target.value)}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="page-token">Page Access Token</Label>
+                  <Input 
+                    id="page-token" 
+                    type="password"
+                    placeholder="EAAB..." 
+                    value={pageToken}
+                    onChange={(e) => setPageToken(e.target.value)}
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button onClick={handleConnectPage} disabled={isSubmitting}>
+                  {isSubmitting ? "Connecting..." : "Save Connection"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
       
@@ -71,7 +183,7 @@ export default function Dashboard() {
         <div className="space-y-2 mb-4 md:mb-0">
           <h2 className="text-2xl font-bold">Welcome to Airdrop</h2>
           <p className="text-muted-foreground max-w-lg">
-            Your AI assistant is ready to handle your Facebook messages. Make sure your Page is connected using the ID shown above.
+            Your AI assistant is ready to handle your Facebook messages. Make sure your Page is connected using the button above.
           </p>
           <div className="flex gap-2 pt-2">
             <Button asChild>
@@ -143,6 +255,22 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {connectedPages && connectedPages.length > 0 && (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {connectedPages.map((page) => (
+            <Card key={page.id} className="p-4 flex items-center gap-4">
+              <div className="p-2 bg-primary/10 rounded-full">
+                <Facebook className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <p className="font-semibold">{page.pageName}</p>
+                <p className="text-xs text-muted-foreground">ID: {page.pageId}</p>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
 
       <div>
         <h2 className="text-xl font-semibold mb-4">Quick Access</h2>
